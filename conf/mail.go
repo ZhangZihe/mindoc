@@ -1,8 +1,9 @@
 package conf
 
 import (
-	"github.com/astaxie/beego"
 	"strings"
+
+	"github.com/astaxie/beego"
 )
 
 type SmtpConf struct {
@@ -14,7 +15,7 @@ type SmtpConf struct {
 	SmtpPort     int
 	FormUserName string
 	MailExpired  int
-	Secure	string
+	Secure       string
 }
 
 func GetMailConfig() *SmtpConf {
@@ -25,7 +26,7 @@ func GetMailConfig() *SmtpConf {
 	form_user_name := beego.AppConfig.String("form_user_name")
 	enable_mail := beego.AppConfig.String("enable_mail")
 	mail_number := beego.AppConfig.DefaultInt("mail_number", 5)
-	secure := beego.AppConfig.DefaultString("secure","NONE")
+	secure := beego.AppConfig.DefaultString("secure", "NONE")
 
 	if secure != "NONE" && secure != "LOGIN" && secure != "SSL" {
 		secure = "NONE"
@@ -38,7 +39,7 @@ func GetMailConfig() *SmtpConf {
 		SmtpPassword: password,
 		FormUserName: form_user_name,
 		SmtpPort:     smtp_port,
-		Secure:secure,
+		Secure:       secure,
 	}
 	return c
 }

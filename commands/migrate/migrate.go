@@ -18,7 +18,7 @@ import (
 
 	"container/list"
 	"fmt"
-	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/lifei6671/mindoc/models"
 	"log"

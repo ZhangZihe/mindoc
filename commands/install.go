@@ -10,7 +10,7 @@ import (
 	"github.com/lifei6671/mindoc/models"
 	"flag"
 	"github.com/lifei6671/mindoc/utils"
-	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 )
 
 //系统安装.
@@ -49,7 +49,7 @@ func ModifyPassword() {
 		flagSet.StringVar(&password, "password", "", "用户密码.")
 
 		if err := flagSet.Parse(os.Args[2:]); err != nil {
-			beego.Error("解析参数失败 -> ",err)
+			logs.Error("解析参数失败 -> ",err)
 			os.Exit(1)
 		}
 

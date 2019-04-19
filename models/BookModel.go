@@ -13,17 +13,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
+	"encoding/json"
+
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/lifei6671/mindoc/conf"
+	"github.com/lifei6671/mindoc/utils"
 	"github.com/lifei6671/mindoc/utils/cryptil"
 	"github.com/lifei6671/mindoc/utils/filetil"
 	"github.com/lifei6671/mindoc/utils/requests"
 	"github.com/lifei6671/mindoc/utils/ziptil"
 	"gopkg.in/russross/blackfriday.v2"
-	"encoding/json"
-	"github.com/lifei6671/mindoc/utils"
 )
 
 // Book struct .
@@ -32,7 +32,7 @@ type Book struct {
 	// BookName 项目名称.
 	BookName string `orm:"column(book_name);size(500)" json:"book_name"`
 	//所属项目空间
-	ItemId   int    `orm:"column(item_id);type(int);default(1)" json:"item_id"`
+	ItemId int `orm:"column(item_id);type(int);default(1)" json:"item_id"`
 	// Identify 项目唯一标识.
 	Identify string `orm:"column(identify);size(100);unique" json:"identify"`
 	//是否是自动发布 0 否/1 是
@@ -189,11 +189,11 @@ func (book *Book) Copy(identify string) error {
 	err := o.QueryTable(book.TableNameWithPrefix()).Filter("identify", identify).One(book)
 
 	if err != nil {
-		beego.Error("查询项目时出错 -> ", err)
+		logs.Error("查询项目时出错 -> ", err)
 		return err
 	}
 	if err := o.Begin(); err != nil {
-		beego.Error("开启事物时出错 -> ", err)
+		logs.Error("开启事物时出错 -> ", err)
 		return err
 	}
 
@@ -206,14 +206,14 @@ func (book *Book) Copy(identify string) error {
 	book.HistoryCount = 0
 
 	if _, err := o.Insert(book); err != nil {
-		beego.Error("复制项目时出错 -> ", err)
+		logs.Error("复制项目时出错 -> ", err)
 		o.Rollback()
 		return err
 	}
 	var rels []*Relationship
 
 	if _, err := o.QueryTable(NewRelationship().TableNameWithPrefix()).Filter("book_id", bookId).All(&rels); err != nil {
-		beego.Error("复制项目关系时出错 -> ", err)
+		logs.Error("复制项目关系时出错 -> ", err)
 		o.Rollback()
 		return err
 	}
@@ -222,7 +222,7 @@ func (book *Book) Copy(identify string) error {
 		rel.BookId = book.BookId
 		rel.RelationshipId = 0
 		if _, err := o.Insert(rel); err != nil {
-			beego.Error("复制项目关系时出错 -> ", err)
+			logs.Error("复制项目关系时出错 -> ", err)
 			o.Rollback()
 			return err
 		}
@@ -231,13 +231,13 @@ func (book *Book) Copy(identify string) error {
 	var docs []*Document
 
 	if _, err := o.QueryTable(NewDocument().TableNameWithPrefix()).Filter("book_id", bookId).Filter("parent_id", 0).All(&docs); err != nil && err != orm.ErrNoRows {
-		beego.Error("读取项目文档时出错 -> ", err)
+		logs.Error("读取项目文档时出错 -> ", err)
 		o.Rollback()
 		return err
 	}
 	if len(docs) > 0 {
 		if err := recursiveInsertDocument(docs, o, book.BookId, 0); err != nil {
-			beego.Error("复制项目时出错 -> ", err)
+			logs.Error("复制项目时出错 -> ", err)
 			o.Rollback()
 			return err
 		}
@@ -257,7 +257,7 @@ func recursiveInsertDocument(docs []*Document, o orm.Ormer, bookId int, parentId
 		doc.Version = time.Now().Unix()
 
 		if _, err := o.Insert(doc); err != nil {
-			beego.Error("插入项目时出错 -> ", err)
+			logs.Error("插入项目时出错 -> ", err)
 			return err
 		}
 
@@ -276,7 +276,7 @@ func recursiveInsertDocument(docs []*Document, o orm.Ormer, bookId int, parentId
 		var subDocs []*Document
 
 		if _, err := o.QueryTable(NewDocument().TableNameWithPrefix()).Filter("parent_id", docId).All(&subDocs); err != nil && err != orm.ErrNoRows {
-			beego.Error("读取文档时出错 -> ", err)
+			logs.Error("读取文档时出错 -> ", err)
 			return err
 		}
 		if len(subDocs) > 0 {
@@ -459,11 +459,11 @@ func (book *Book) ThoroughDeleteBook(id int) error {
 
 	//删除导出缓存
 	if err := os.RemoveAll(filepath.Join(conf.GetExportOutputPath(), strconv.Itoa(id))); err != nil {
-		beego.Error("删除项目缓存失败 ->", err)
+		logs.Error("删除项目缓存失败 ->", err)
 	}
 	//删除附件和图片
 	if err := os.RemoveAll(filepath.Join(conf.WorkingDirectory, "uploads", book.Identify)); err != nil {
-		beego.Error("删除项目附件和图片失败 ->", err)
+		logs.Error("删除项目附件和图片失败 ->", err)
 	}
 
 	return o.Commit()
@@ -589,7 +589,7 @@ func (book *Book) ReleaseContent(bookId int) {
 	_, err := o.QueryTable(NewDocument().TableNameWithPrefix()).Filter("book_id", bookId).All(&docs)
 
 	if err != nil {
-		beego.Error("发布失败 =>", bookId, err)
+		logs.Error("发布失败 =>", bookId, err)
 		return
 	}
 	for _, item := range docs {
@@ -606,10 +606,10 @@ func (book *Book) ResetDocumentNumber(bookId int) {
 	if err == nil {
 		_, err = o.Raw("UPDATE md_books SET doc_count = ? WHERE book_id = ?", int(totalCount), bookId).Exec()
 		if err != nil {
-			beego.Error("重置文档数量失败 =>", bookId, err)
+			logs.Error("重置文档数量失败 =>", bookId, err)
 		}
 	} else {
-		beego.Error("获取文档数量失败 =>", bookId, err)
+		logs.Error("获取文档数量失败 =>", bookId, err)
 	}
 }
 
@@ -628,7 +628,7 @@ func (book *Book) ImportBook(zipPath string) error {
 	tempPath := filepath.Join(os.TempDir(), md5str)
 
 	if err := os.MkdirAll(tempPath, 0766); err != nil {
-		beego.Error("创建导入目录出错 => ", err)
+		logs.Error("创建导入目录出错 => ", err)
 	}
 	//如果加压缩失败
 	if err := ziptil.Unzip(zipPath, tempPath); err != nil {
@@ -673,7 +673,7 @@ func (book *Book) ImportBook(zipPath string) error {
 			ext := filepath.Ext(info.Name())
 			//如果是Markdown文件
 			if strings.EqualFold(ext, ".md") || strings.EqualFold(ext, ".markdown") {
-				beego.Info("正在处理 =>", path, info.Name())
+				logs.Info("正在处理 =>", path, info.Name())
 				doc := NewDocument()
 				doc.BookId = book.BookId
 				doc.MemberId = book.MemberId
@@ -776,11 +776,11 @@ func (book *Book) ImportBook(zipPath string) error {
 						//如果本地存在该链接
 						if filetil.FileExists(linkPath) {
 							ext := filepath.Ext(linkPath)
-							//beego.Info("当前后缀 -> ",ext)
+							//logs.Info("当前后缀 -> ",ext)
 							//如果链接是Markdown文件，则生成文档标识,否则，将目标文件复制到项目目录
 							if strings.EqualFold(ext, ".md") || strings.EqualFold(ext, ".markdown") {
 								docIdentify := strings.Replace(strings.TrimPrefix(strings.Replace(linkPath, "\\", "/", -1), tempPath+"/"), "/", "-", -1)
-								//beego.Info(originalLink, "|", linkPath, "|", docIdentify)
+								//logs.Info(originalLink, "|", linkPath, "|", docIdentify)
 								if ok, err := regexp.MatchString(`[a-z]+[a-zA-Z0-9_.\-]*$`, docIdentify); !ok || err != nil {
 									docIdentify = "import-" + docIdentify
 								}
@@ -799,7 +799,7 @@ func (book *Book) ImportBook(zipPath string) error {
 
 							}
 						} else {
-							beego.Info("文件不存在 ->", linkPath)
+							logs.Info("文件不存在 ->", linkPath)
 						}
 					}
 
@@ -809,7 +809,7 @@ func (book *Book) ImportBook(zipPath string) error {
 				//codeRe := regexp.MustCompile("```\\w+")
 
 				//doc.Markdown = codeRe.ReplaceAllStringFunc(doc.Markdown, func(s string) string {
-				//	//beego.Info(s)
+				//	//logs.Info(s)
 				//	return strings.Replace(s,"```","``` ",-1)
 				//})
 
@@ -843,21 +843,21 @@ func (book *Book) ImportBook(zipPath string) error {
 					}
 				}
 				if strings.EqualFold(info.Name(), "README.md") {
-					beego.Info(path, "|", info.Name(), "|", parentIdentify, "|", parentId)
+					logs.Info(path, "|", info.Name(), "|", parentIdentify, "|", parentId)
 				}
 				isInsert := false
 				//如果当前文件是README.md，则将内容更新到父级
 				if strings.EqualFold(info.Name(), "README.md") && parentId != 0 {
 
 					doc.DocumentId = parentId
-					//beego.Info(path,"|",parentId)
+					//logs.Info(path,"|",parentId)
 				} else {
-					//beego.Info(path,"|",parentIdentify)
+					//logs.Info(path,"|",parentIdentify)
 					doc.ParentId = parentId
 					isInsert = true
 				}
 				if err := doc.InsertOrUpdate("document_name", "markdown", "content"); err != nil {
-					beego.Error(doc.DocumentId, err)
+					logs.Error(doc.DocumentId, err)
 				}
 				if isInsert {
 					docMap[docIdentify] = doc.DocumentId
@@ -866,7 +866,7 @@ func (book *Book) ImportBook(zipPath string) error {
 		} else {
 			//如果当前目录下存在Markdown文件，则需要创建此节点
 			if filetil.HasFileOfExt(path, []string{".md", ".markdown"}) {
-				beego.Info("正在处理 =>", path, info.Name())
+				logs.Info("正在处理 =>", path, info.Name())
 				identify := strings.Replace(strings.Trim(strings.TrimPrefix(path, tempPath), "/"), "/", "-", -1)
 				if ok, err := regexp.MatchString(`[a-z]+[a-zA-Z0-9_.\-]*$`, identify); !ok || err != nil {
 					identify = "import-" + identify
@@ -891,11 +891,11 @@ func (book *Book) ImportBook(zipPath string) error {
 				parentDoc.ParentId = parentId
 
 				if err := parentDoc.InsertOrUpdate(); err != nil {
-					beego.Error(err)
+					logs.Error(err)
 				}
 
 				docMap[identify] = parentDoc.DocumentId
-				//beego.Info(path,"|",parentDoc.DocumentId,"|",identify,"|",info.Name(),"|",parentIdentify)
+				//logs.Info(path,"|",parentDoc.DocumentId,"|",identify,"|",info.Name(),"|",parentIdentify)
 			}
 		}
 
@@ -903,10 +903,10 @@ func (book *Book) ImportBook(zipPath string) error {
 	})
 
 	if err != nil {
-		beego.Error("导入项目异常 => ", err)
+		logs.Error("导入项目异常 => ", err)
 		book.Description = "【项目导入存在错误：" + err.Error() + "】"
 	}
-	beego.Info("项目导入完毕 => ", book.BookName)
+	logs.Info("项目导入完毕 => ", book.BookName)
 	book.ReleaseContent(book.BookId)
 	return err
 }
@@ -933,7 +933,7 @@ where mtr.book_id = ? and mtm.member_id = ? order by mtm.role_id asc limit 1;`
 	err = o.Raw(sql, bookId, memberId).QueryRow(&roleId)
 
 	if err != nil {
-		beego.Error("查询用户项目角色出错 -> book_id=", bookId, " member_id=", memberId, err)
+		logs.Error("查询用户项目角色出错 -> book_id=", bookId, " member_id=", memberId, err)
 		return 0, err
 	}
 	return conf.BookRole(roleId), nil

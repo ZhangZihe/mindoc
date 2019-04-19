@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/lifei6671/mindoc/cache"
 	"github.com/lifei6671/mindoc/conf"
@@ -141,7 +142,7 @@ func (item *Document) RecursiveDocument(docId int) error {
 
 	_, err := o.Raw("SELECT document_id FROM " + item.TableNameWithPrefix() + " WHERE parent_id=" + strconv.Itoa(docId)).Values(&maps)
 	if err != nil {
-		beego.Error("RecursiveDocument => ", err)
+		logs.Error("RecursiveDocument => ", err)
 		return err
 	}
 
@@ -163,11 +164,11 @@ func (item *Document) PutToCache() {
 		if m.Identify == "" {
 
 			if err := cache.Put("Document.Id."+strconv.Itoa(m.DocumentId), m, time.Second*3600); err != nil {
-				beego.Info("文档缓存失败:", m.DocumentId)
+				logs.Info("文档缓存失败:", m.DocumentId)
 			}
 		} else {
 			if err := cache.Put(fmt.Sprintf("Document.BookId.%d.Identify.%s", m.BookId, m.Identify), m, time.Second*3600); err != nil {
-				beego.Info("文档缓存失败:", m.DocumentId)
+				logs.Info("文档缓存失败:", m.DocumentId)
 			}
 		}
 
@@ -189,7 +190,7 @@ func (item *Document) RemoveCache() {
 func (item *Document) FromCacheById(id int) (*Document, error) {
 
 	if err := cache.Get("Document.Id."+strconv.Itoa(id), &item); err == nil && item.DocumentId > 0 {
-		beego.Info("从缓存中获取文档信息成功 ->", item.DocumentId)
+		logs.Info("从缓存中获取文档信息成功 ->", item.DocumentId)
 		return item, nil
 	}
 
@@ -210,7 +211,7 @@ func (item *Document) FromCacheByIdentify(identify string, bookId int) (*Documen
 	key := fmt.Sprintf("Document.BookId.%d.Identify.%s", bookId, identify)
 
 	if err := cache.Get(key, item); err == nil && item.DocumentId > 0 {
-		beego.Info("从缓存中获取文档信息成功 ->", key)
+		logs.Info("从缓存中获取文档信息成功 ->", key)
 		return item, nil
 	}
 
@@ -246,14 +247,14 @@ func (item *Document) ReleaseContent() error {
 	err := item.Processor().InsertOrUpdate("release")
 
 	if err != nil {
-		beego.Error(fmt.Sprintf("发布失败 -> %+v", item), err)
+		logs.Error(fmt.Sprintf("发布失败 -> %+v", item), err)
 		return err
 	}
 	//当文档发布后，需要清除已缓存的转换文档和文档缓存
 	item.RemoveCache()
 
 	if err := os.RemoveAll(filepath.Join(conf.WorkingDirectory, "uploads", "books", strconv.Itoa(item.BookId))); err != nil {
-		beego.Error("删除已缓存的文档目录失败 -> ", filepath.Join(conf.WorkingDirectory, "uploads", "books", strconv.Itoa(item.BookId)))
+		logs.Error("删除已缓存的文档目录失败 -> ", filepath.Join(conf.WorkingDirectory, "uploads", "books", strconv.Itoa(item.BookId)))
 		return err
 	}
 

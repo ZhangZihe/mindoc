@@ -2,12 +2,13 @@ package routers
 
 import (
 	"encoding/json"
+	"net/url"
+	"regexp"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/lifei6671/mindoc/conf"
 	"github.com/lifei6671/mindoc/models"
-	"net/url"
-	"regexp"
 )
 
 func init() {
@@ -25,7 +26,7 @@ func init() {
 
 				ctx.ResponseWriter.Write(returnJSON)
 			} else {
-				ctx.Redirect(302, conf.URLFor("AccountController.Login") + "?url=" +  url.PathEscape(conf.BaseUrl + ctx.Request.URL.RequestURI()))
+				ctx.Redirect(302, conf.URLFor("AccountController.Login")+"?url="+url.PathEscape(conf.BaseUrl+ctx.Request.URL.RequestURI()))
 			}
 		}
 	}
@@ -36,7 +37,7 @@ func init() {
 	beego.InsertFilter("/book", beego.BeforeRouter, FilterUser)
 	beego.InsertFilter("/book/*", beego.BeforeRouter, FilterUser)
 	beego.InsertFilter("/api/*", beego.BeforeRouter, FilterUser)
-	beego.InsertFilter("/manage/*", beego.BeforeRouter,FilterUser)
+	beego.InsertFilter("/manage/*", beego.BeforeRouter, FilterUser)
 
 	var FinishRouter = func(ctx *context.Context) {
 		ctx.ResponseWriter.Header().Add("MinDoc-Version", conf.VERSION)

@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 
+	"path/filepath"
+
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/kardianos/service"
 	"github.com/lifei6671/mindoc/commands"
 	"github.com/lifei6671/mindoc/conf"
 	"github.com/lifei6671/mindoc/controllers"
-	"path/filepath"
 )
 
 type Daemon struct {
@@ -44,7 +46,6 @@ func (d *Daemon) Start(s service.Service) error {
 
 func (d *Daemon) Run() {
 
-
 	commands.ResolveCommand(d.config.Arguments)
 
 	commands.RegisterFunction()
@@ -55,7 +56,7 @@ func (d *Daemon) Run() {
 
 	beego.ErrorController(&controllers.ErrorController{})
 
-	f,err := filepath.Abs(os.Args[0])
+	f, err := filepath.Abs(os.Args[0])
 
 	if err != nil {
 		f = os.Args[0]
@@ -80,15 +81,15 @@ func Install() {
 	s, err := service.New(d, d.config)
 
 	if err != nil {
-		beego.Error("Create service error => ", err)
+		logs.Error("Create service error => ", err)
 		os.Exit(1)
 	}
 	err = s.Install()
 	if err != nil {
-		beego.Error("Install service error:", err)
+		logs.Error("Install service error:", err)
 		os.Exit(1)
 	} else {
-		beego.Info("Service installed!")
+		logs.Info("Service installed!")
 	}
 
 	os.Exit(0)
@@ -99,15 +100,15 @@ func Uninstall() {
 	s, err := service.New(d, d.config)
 
 	if err != nil {
-		beego.Error("Create service error => ", err)
+		logs.Error("Create service error => ", err)
 		os.Exit(1)
 	}
 	err = s.Uninstall()
 	if err != nil {
-		beego.Error("Install service error:", err)
+		logs.Error("Install service error:", err)
 		os.Exit(1)
 	} else {
-		beego.Info("Service uninstalled!")
+		logs.Info("Service uninstalled!")
 	}
 	os.Exit(0)
 }
@@ -117,15 +118,15 @@ func Restart() {
 	s, err := service.New(d, d.config)
 
 	if err != nil {
-		beego.Error("Create service error => ", err)
+		logs.Error("Create service error => ", err)
 		os.Exit(1)
 	}
 	err = s.Restart()
 	if err != nil {
-		beego.Error("Install service error:", err)
+		logs.Error("Install service error:", err)
 		os.Exit(1)
 	} else {
-		beego.Info("Service Restart!")
+		logs.Info("Service Restart!")
 	}
 	os.Exit(0)
 }

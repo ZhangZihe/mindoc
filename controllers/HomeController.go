@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"math"
-	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/lifei6671/mindoc/models"
 	"github.com/lifei6671/mindoc/utils/pagination"
 	"github.com/lifei6671/mindoc/conf"
@@ -36,7 +36,7 @@ func (c *HomeController) Index() {
 	books, totalCount, err := models.NewBook().FindForHomeToPager(pageIndex, pageSize, memberId)
 
 	if err != nil {
-		beego.Error(err)
+		logs.Error(err)
 		c.Abort("500")
 	}
 	if totalCount > 0 {

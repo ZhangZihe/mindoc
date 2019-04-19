@@ -30,7 +30,7 @@
   version = "1.4.1"
 
 [[constraint]]
-  name = "github.com/astaxie/beego"
+  name = "github.com/astaxie/beego/logs"
   version = "1.10.1"
 
 [[constraint]]
