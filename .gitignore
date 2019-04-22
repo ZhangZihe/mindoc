@@ -26,3 +26,6 @@ _testmain.go
 /conf/app.conf
 /vendor
 /runtime
+/debug
+/database
+/.vscode
