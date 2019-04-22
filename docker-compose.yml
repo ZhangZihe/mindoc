@@ -9,8 +9,8 @@ MinDoc_New:
     - /var/www/mindoc/uploads:/mindoc/uploads
   environment:
     - MINDOC_RUN_MODE=prod
-    - MINDOC_DB_ADAPTER=sqlite3
-    - MINDOC_DB_DATABASE=./database/mindoc.db
+    - MINDOC_DB_ADAPTER=MySQL
+    - MINDOC_DB_DATABASE=mindoc
     - MINDOC_CACHE=true
     - MINDOC_CACHE_PROVIDER=file
     - MINDOC_ENABLE_EXPORT=false
