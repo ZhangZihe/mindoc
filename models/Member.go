@@ -10,12 +10,13 @@ import (
 
 	"gopkg.in/ldap.v2"
 
+	"math"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/lifei6671/mindoc/conf"
 	"github.com/lifei6671/mindoc/utils"
-	"math"
 )
 
 type Member struct {
@@ -135,7 +136,7 @@ func (m *Member) ldapLogin(account string, password string) (*Member, error) {
 		m.Account = account
 		m.Email = searchResult.Entries[0].GetAttributeValue("mail")
 		m.AuthMethod = "ldap"
-		m.Avatar = "/static/images/headimgurl.jpg"
+		m.Avatar = "/static/images/middle.gif"
 		m.Role = conf.SystemRole(beego.AppConfig.DefaultInt("ldap_user_role", 2))
 		m.CreateTime = time.Now()
 
@@ -218,7 +219,6 @@ func (m *Member) Find(id int, cols ...string) (*Member, error) {
 	m.ResolveRoleName()
 	return m, nil
 }
-
 
 func (m *Member) ResolveRoleName() {
 	if m.Role == conf.MemberSuperRole {
@@ -425,7 +425,7 @@ func (m *Member) Delete(oldId int, newId int) error {
 		o.Rollback()
 		return err
 	}
-	_,err = o.QueryTable(NewTeamMember()).Filter("member_id",oldId).Delete()
+	_, err = o.QueryTable(NewTeamMember()).Filter("member_id", oldId).Delete()
 
 	if err != nil {
 		o.Rollback()

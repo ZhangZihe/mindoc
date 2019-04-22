@@ -45,7 +45,7 @@
                             </li>
                             {{if eq .Member.Role 0 }}
                             <li>
-                                <a href="{{urlfor "ManagerController.Index"}}" title="管理后台"><i class="fa fa-university" aria-hidden="true"></i> 管理后台</a>
+                                <a href="{{urlfor "ManagerController.Index"}}" title="管理后台"><i class="fa fa-cog" aria-hidden="true"></i> 管理后台</a>
                             </li>
                             {{end}}
                             <li>
@@ -64,7 +64,7 @@
                 {{if gt .Member.MemberId 0}}
                 <li>
                     <div class="img user-info" data-toggle="dropdown">
-                        <img src="{{cdnimg .Member.Avatar}}" onerror="this.src='{{cdnimg "/static/images/headimgurl.jpg"}}';" class="img-circle userbar-avatar" alt="{{.Member.Account}}">
+                        <img src="{{cdnimg .Member.Avatar}}" onerror="this.src='{{cdnimg "/static/images/middle.gif"}}';" class="img-circle userbar-avatar" alt="{{.Member.Account}}">
                         <div class="userbar-content">
                             <span>{{.Member.Account}}</span>
                             <div>{{.Member.RoleName}}</div>
@@ -83,7 +83,7 @@
                         </li>
                         {{if eq .Member.Role 0  1}}
                         <li>
-                            <a href="{{urlfor "ManagerController.Index"}}" title="管理后台"><i class="fa fa-university" aria-hidden="true"></i> 管理后台</a>
+                            <a href="{{urlfor "ManagerController.Index"}}" title="管理后台"><i class="fa fa-cog" aria-hidden="true"></i> 管理后台</a>
                         </li>
                         {{end}}
                         <li>

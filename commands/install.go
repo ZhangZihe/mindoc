@@ -5,12 +5,13 @@ import (
 	"os"
 	"time"
 
+	"flag"
+
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/lifei6671/mindoc/conf"
 	"github.com/lifei6671/mindoc/models"
-	"flag"
 	"github.com/lifei6671/mindoc/utils"
-	"github.com/astaxie/beego/logs"
 )
 
 //系统安装.
@@ -39,7 +40,7 @@ func Version() {
 
 //修改用户密码
 func ModifyPassword() {
-	var account,password string
+	var account, password string
 
 	//账号和密码需要解析参数后才能获取
 	if len(os.Args) >= 2 && os.Args[1] == "password" {
@@ -49,7 +50,7 @@ func ModifyPassword() {
 		flagSet.StringVar(&password, "password", "", "用户密码.")
 
 		if err := flagSet.Parse(os.Args[2:]); err != nil {
-			logs.Error("解析参数失败 -> ",err)
+			logs.Error("解析参数失败 -> ", err)
 			os.Exit(1)
 		}
 
@@ -66,29 +67,28 @@ func ModifyPassword() {
 			fmt.Println("Password cannot be empty.")
 			os.Exit(1)
 		}
-		member,err := models.NewMember().FindByAccount(account)
+		member, err := models.NewMember().FindByAccount(account)
 
 		if err != nil {
-			fmt.Println("Failed to change password:",err)
+			fmt.Println("Failed to change password:", err)
 			os.Exit(1)
 		}
-		pwd,err := utils.PasswordHash(password)
+		pwd, err := utils.PasswordHash(password)
 
 		if err != nil {
-			fmt.Println("Failed to change password:",err)
+			fmt.Println("Failed to change password:", err)
 			os.Exit(1)
 		}
 		member.Password = pwd
 
 		err = member.Update("password")
 		if err != nil {
-			fmt.Println("Failed to change password:",err)
+			fmt.Println("Failed to change password:", err)
 			os.Exit(1)
 		}
 		fmt.Println("Successfully modified.")
 		os.Exit(0)
 	}
-
 
 }
 
@@ -106,7 +106,7 @@ func initialization() {
 	if err == orm.ErrNoRows {
 
 		member.Account = "admin"
-		member.Avatar = conf.URLForWithCdnImage("/static/images/headimgurl.jpg")
+		member.Avatar = conf.URLForWithCdnImage("/static/images/middle.gif")
 		member.Password = "123456"
 		member.AuthMethod = "local"
 		member.Role = 0
@@ -120,10 +120,10 @@ func initialization() {
 		book := models.NewBook()
 
 		book.MemberId = member.MemberId
-		book.BookName = "MinDoc演示项目"
+		book.BookName = "演示项目"
 		book.Status = 0
 		book.ItemId = 1
-		book.Description = "这是一个MinDoc演示项目，该项目是由系统初始化时自动创建。"
+		book.Description = "这是一个演示项目，该项目是由系统初始化时自动创建。"
 		book.CommentCount = 0
 		book.PrivatelyOwned = 0
 		book.CommentStatus = "closed"
