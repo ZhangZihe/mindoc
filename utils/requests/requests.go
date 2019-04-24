@@ -1,16 +1,44 @@
 package requests
 
 import (
+	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
-	"errors"
-	"fmt"
+	"strings"
 )
 
+//发起一个json参数的http请求
+func HttpPostWithJson(remoteUrl, jsonParam string) ([]byte, error) {
+	client := &http.Client{}
+	uri, err := url.Parse(remoteUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := http.NewRequest("POST", uri.String(), strings.NewReader(jsonParam))
+	request.Header.Add("Content-Type", "application/json; charset=utf-8")
+
+	resp, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var body []byte
+	if resp.StatusCode == http.StatusOK {
+		body, err = ioutil.ReadAll(resp.Body)
+	} else {
+		return nil, fmt.Errorf("bad status: %s", resp.Status)
+	}
+
+	return body, nil
+}
+
 //下载远程文件并保存到指定位置
-func DownloadAndSaveFile(remoteUrl, dstFile string) (error) {
+func DownloadAndSaveFile(remoteUrl, dstFile string) error {
 	client := &http.Client{}
 	uri, err := url.Parse(remoteUrl)
 	if err != nil {
@@ -18,7 +46,7 @@ func DownloadAndSaveFile(remoteUrl, dstFile string) (error) {
 	}
 	// Create the file
 	out, err := os.Create(dstFile)
-	if err != nil  {
+	if err != nil {
 		return err
 	}
 	defer out.Close()
@@ -35,11 +63,10 @@ func DownloadAndSaveFile(remoteUrl, dstFile string) (error) {
 	}
 	defer resp.Body.Close()
 
-
 	if resp.StatusCode == http.StatusOK {
 		_, err = io.Copy(out, resp.Body)
-	}else{
-		return errors.New(fmt.Sprintf("bad status: %s", resp.Status))
+	} else {
+		return fmt.Errorf("bad status: %s", resp.Status)
 	}
 	return nil
 }

@@ -37,6 +37,7 @@ type Member struct {
 	CreateTime    time.Time       `orm:"type(datetime);column(create_time);auto_now_add" json:"create_time"`
 	CreateAt      int             `orm:"type(int);column(create_at)" json:"create_at"`
 	LastLoginTime time.Time       `orm:"type(datetime);column(last_login_time);null" json:"last_login_time"`
+	OpenUserID    string          `orm:"size(255);column(openuserid)" json:"openuserid"`
 }
 
 // TableName 获取对应数据库表名.
@@ -235,6 +236,18 @@ func (m *Member) FindByAccount(account string) (*Member, error) {
 	o := orm.NewOrm()
 
 	err := o.QueryTable(m.TableNameWithPrefix()).Filter("account", account).One(m)
+
+	if err == nil {
+		m.ResolveRoleName()
+	}
+	return m, err
+}
+
+//根据OpenUserID查找用户.
+func (m *Member) FindByOpenUserID(openUserID string) (*Member, error) {
+	o := orm.NewOrm()
+
+	err := o.QueryTable(m.TableNameWithPrefix()).Filter("openuserid", openUserID).One(m)
 
 	if err == nil {
 		m.ResolveRoleName()
