@@ -25,8 +25,9 @@ type FxiaokeSdk struct {
 func NewFxiaokeSdk() *FxiaokeSdk {
 	result := new(FxiaokeSdk)
 	appTokenResp, _ := result.CgiAppAccessTokenGet()
-	cropTokenResp, _ := result.CgiCorpAccessTokenGet()
 	AppAccessToken = appTokenResp.AppAccessToken
+
+	cropTokenResp, _ := result.CgiCorpAccessTokenGet()
 	CorpAccessToken = cropTokenResp.CorpAccessToken
 	CorpID = cropTokenResp.CorpID
 	return result
@@ -129,7 +130,7 @@ func (f *FxiaokeSdk) CgiAppAccessTokenGet() (CgiAppAccessTokenGetResponse, error
 
 func (f *FxiaokeSdk) CgiCorpAccessTokenGet() (CgiCorpAccessTokenGetResponse, error) {
 	req, _ := json.Marshal(CgiCorpAccessTokenGetRequest{AppID, AppSecret, PermanentCode})
-	result, err := requests.HttpPostWithJson(BaseURL+"/cgi/corpAccessToken/get", string(req))
+	result, err := requests.HttpPostWithJson(BaseURL+"/cgi/corpAccessToken/get/V2", string(req))
 	response := CgiCorpAccessTokenGetResponse{}
 	json.Unmarshal(result, &response)
 	return response, err

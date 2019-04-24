@@ -214,6 +214,7 @@ func (c *AccountController) Oauth4fxiaoke() {
 	//如果用户登录了，则跳转到网站首页
 	if member, ok := c.GetSession(conf.LoginSessionName).(models.Member); ok && member.MemberId > 0 {
 		c.Redirect(conf.URLFor("HomeController.Index"), 302)
+		return
 	}
 
 	fxiaokeSdk := models.NewFxiaokeSdk()
@@ -227,19 +228,21 @@ func (c *AccountController) Oauth4fxiaoke() {
 	}
 	if openUserID == "" {
 		c.Redirect("/", 302)
+		return
 	}
 
 	//以openuserid查询是否已有注册记录, 如未注册则自动注册
-	member := models.NewMember()
-	if _, err := member.FindByOpenUserID(openUserID); err == nil && member.MemberId == 0 {
+	member, _ := models.NewMember().FindByOpenUserID(openUserID)
+	if member.MemberId == 0 {
 		//查询员工信息
 		result, _ := fxiaokeSdk.CgiUserGet(openUserID)
 		if result.Email == "" {
 			c.JsonResult(6006, "注册失败，请在纷享销客个人资料中填写您的邮箱")
+			return
 		}
 
 		member.OpenUserID = result.OpenUserID
-		member.Account = result.Account
+		member.Account = result.NickName
 		member.Password = "SD2019.reg"
 		member.Role = conf.MemberGeneralRole
 		member.Avatar = conf.GetDefaultAvatar()
@@ -250,8 +253,9 @@ func (c *AccountController) Oauth4fxiaoke() {
 		member.Status = 0
 		if err := member.Add(); err != nil {
 			c.JsonResult(6006, "注册失败，请联系系统管理员处理")
+			return
 		}
-		addedMember, _ := models.NewMember().FindByAccount(result.Account)
+		addedMember, _ := member.FindByAccount(result.Account)
 		member = addedMember
 	}
 
@@ -259,9 +263,9 @@ func (c *AccountController) Oauth4fxiaoke() {
 	var remember CookieRemember
 	if cookie, ok := c.GetSecureCookie(conf.GetAppKey(), "login"); ok {
 		if err := utils.Decode(cookie, &remember); err == nil {
-			c.SetMember(*member)
-			c.LoggedIn(false)
-			c.StopRun()
+			// c.SetMember(*member)
+			// c.LoggedIn(false)
+			// c.StopRun()
 		}
 	}
 	remember.MemberId = member.MemberId

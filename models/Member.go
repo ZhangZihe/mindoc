@@ -156,7 +156,7 @@ func (m *Member) Add() error {
 	o := orm.NewOrm()
 
 	if ok, err := regexp.MatchString(conf.RegexpAccount, m.Account); m.Account == "" || !ok || err != nil {
-		return errors.New("账号只能由英文字母数字组成，且在3-50个字符")
+		//return errors.New("账号只能由英文字母数字组成，且在3-50个字符")
 	}
 	if m.Email == "" {
 		return errors.New("邮箱不能为空")

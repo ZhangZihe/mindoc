@@ -26,12 +26,12 @@
     </div>
 </header>
 <div class="container manual-body">
-    <div class="row login">
+    <div class="row login" style="margin-top:100px">
         <div class="login-body">
             <form role="form" method="post">
             {{ .xsrfdata }}
                 <h3 class="text-center">用户登录</h3>
-                <div class="form-group">
+                <!--<div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="fa fa-user"></i>
@@ -46,7 +46,7 @@
                         </div>
                         <input type="password" class="form-control" placeholder="密码" name="password" id="password" autocomplete="off">
                     </div>
-                </div>
+                </div>-->
                 {{if .ENABLED_CAPTCHA }}
                 {{if ne .ENABLED_CAPTCHA "false"}}
                 <div class="form-group">
@@ -61,14 +61,14 @@
                 </div>
                 {{end}}
                 {{end}}
-                <div class="checkbox">
+                <!--<div class="checkbox">
                     <label>
                         <input type="checkbox" name="is_remember" value="yes"> 保持登录
                     </label>
                     <a href="{{urlfor "AccountController.FindPassword" }}" style="display: inline-block;float: right">忘记密码？</a>
-                </div>
+                </div>-->
                 <div class="form-group">
-                    <button type="button" id="btn-login" class="btn btn-success" style="width: 100%"  data-loading-text="正在登录..." autocomplete="off">立即登录</button>
+                    <button type="button" id="btn-login" class="btn btn-success" style="width: 100%; margin-top:50px"  data-loading-text="正在登录..." autocomplete="off">去纷享销客应用入口登录</button>
                 </div>
                 {{if .ENABLED_REGISTER}}
                 {{if ne .ENABLED_REGISTER "false"}}
@@ -100,6 +100,8 @@
         });
 
         $("#btn-login").on('click', function () {
+            location.href = 'https://www.fxiaoke.com/XV/Home/Index#app/manage/myapps';
+            return;
             $(this).tooltip('destroy').parents('.form-group').removeClass('has-error');
             var $btn = $(this).button('loading');
 
