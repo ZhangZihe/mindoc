@@ -478,7 +478,7 @@ func (c *BookController) Create() {
 
 				fileName := "cover_" + strconv.FormatInt(time.Now().UnixNano(), 16)
 
-				filePath := filepath.Join("uploads", time.Now().Format("200601"), fileName+ext)
+				filePath := filepath.Join(conf.WorkingDirectory, "uploads", time.Now().Format("200601"), fileName+ext)
 
 				path := filepath.Dir(filePath)
 
