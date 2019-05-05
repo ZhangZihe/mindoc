@@ -250,13 +250,13 @@ textarea{
 }
 .manual-list .list-item .manual-item-standard{
     float: left;
-    width: 163px;
+    width: 155px;
     line-height: 1.5em;
     position: relative;
 }
 .manual-list .list-item .manual-item-standard>dt{
-    margin-bottom: 6px;
-    height: 231px;
+    margin-bottom: 0px;
+    height: 230px;
     position: relative;
 }
 .manual-list .list-item .manual-item-standard>dt>a {
@@ -270,10 +270,10 @@ textarea{
 }
 .manual-list .list-item .manual-item-standard .cover {
     border: none;
-    width: 170px;
+    width: 150px;
     position: relative;
     display: inline-block;
-    height: 230px;
+    height: 210px;
     background-color: #eee;
     border-radius: 2px;
     box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
