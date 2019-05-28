@@ -9,21 +9,22 @@ import (
 	"strings"
 	"time"
 
+	"encoding/json"
+	"net/http"
+	"regexp"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/lifei6671/mindoc/conf"
 	"github.com/lifei6671/mindoc/converter"
+	"github.com/lifei6671/mindoc/utils/cryptil"
 	"github.com/lifei6671/mindoc/utils/filetil"
+	"github.com/lifei6671/mindoc/utils/gopool"
+	"github.com/lifei6671/mindoc/utils/requests"
 	"github.com/lifei6671/mindoc/utils/ziptil"
 	"gopkg.in/russross/blackfriday.v2"
-	"regexp"
-	"github.com/lifei6671/mindoc/utils/cryptil"
-	"github.com/lifei6671/mindoc/utils/requests"
-	"github.com/lifei6671/mindoc/utils/gopool"
-	"net/http"
-	"encoding/json"
 )
 
 var (
@@ -228,7 +229,7 @@ func (m *BookResult) ToBookResult(book Book) *BookResult {
 	}
 
 	if m.ItemId > 0 {
-		if item,err := NewItemsets().First(m.ItemId); err == nil {
+		if item, err := NewItemsets().First(m.ItemId); err == nil {
 			m.ItemName = item.ItemName
 		}
 	}
@@ -271,7 +272,7 @@ func (m *BookResult) Converter(sessionId string) (ConvertBookResult, error) {
 	//先将转换的文件储存到临时目录
 	tempOutputPath := filepath.Join(os.TempDir(), sessionId, m.Identify, "source") //filepath.Abs(filepath.Join("cache", sessionId))
 
-	sourceDir := strings.TrimSuffix(tempOutputPath, "source");
+	sourceDir := strings.TrimSuffix(tempOutputPath, "source")
 	if filetil.FileExists(sourceDir) {
 		if err := os.RemoveAll(sourceDir); err != nil {
 			logs.Error("删除临时目录失败 ->", sourceDir, err)
@@ -332,7 +333,7 @@ func (m *BookResult) Converter(sessionId string) (ConvertBookResult, error) {
 		Cover:        m.Cover,
 		Timestamp:    time.Now().Format("2006-01-02 15:04:05"),
 		Description:  string(blackfriday.Run([]byte(m.Description))),
-		Footer:       "<p style='color:#8E8E8E;font-size:12px;'>本文档使用 <a href='https://www.iminho.me' style='text-decoration:none;color:#1abc9c;font-weight:bold;'>MinDoc</a> 构建 <span style='float:right'>- _PAGENUM_ -</span></p>",
+		Footer:       "<p style='color:#8E8E8E;font-size:12px;'>本文档使用 <a href='http://lib.sodao.me' style='text-decoration:none;color:#1abc9c;font-weight:bold;'>搜道文库</a> 构建 <span style='float:right'>- _PAGENUM_ -</span></p>",
 		Header:       "<p style='color:#8E8E8E;font-size:12px;'>_SECTION_</p>",
 		Identifier:   "",
 		Language:     "zh-CN",
@@ -484,7 +485,7 @@ func (m *BookResult) Converter(sessionId string) (ConvertBookResult, error) {
 	}
 	logs.Info("文档转换完成：" + m.BookName)
 
-	if err := filetil.CopyFile(filepath.Join(eBookConverter.OutputPath, "output", "book.mobi"), mobipath, ); err != nil {
+	if err := filetil.CopyFile(filepath.Join(eBookConverter.OutputPath, "output", "book.mobi"), mobipath); err != nil {
 		logs.Error("复制文档失败 -> ", filepath.Join(eBookConverter.OutputPath, "output", "book.mobi"), err)
 	}
 	if err := filetil.CopyFile(filepath.Join(eBookConverter.OutputPath, "output", "book.pdf"), pdfpath); err != nil {

@@ -62,7 +62,7 @@
             </div>
             <div class="m-copyright">
                 <p>
-                    本文档使用 <a href="https://www.iminho.me" target="_blank">MinDoc</a> 发布
+                    本文档使用 <a href="http://lib.sodao.me" target="_blank">搜道文库</a> 发布
                 </p>
             </div>
         </div>
