@@ -95,7 +95,7 @@ func (c *SearchController) User() {
 		if err == models.ErrPermissionDenied {
 			c.JsonResult(403, "没有权限")
 		}
-		c.JsonResult(500, "项目不存在")
+		c.JsonResult(500, "书籍不存在")
 	}
 
 	//members, err := models.NewMemberRelationshipResult().FindNotJoinUsersByAccount(book.BookId, 10, "%"+keyword+"%")

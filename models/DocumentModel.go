@@ -120,7 +120,7 @@ func (item *Document) InsertOrUpdate(cols ...string) error {
 	return nil
 }
 
-//根据文档识别编号和项目id获取一篇文档
+//根据文档识别编号和书籍id获取一篇文档
 func (item *Document) FindByIdentityFirst(identify string, bookId int) (*Document, error) {
 	o := orm.NewOrm()
 
@@ -223,7 +223,7 @@ func (item *Document) FromCacheByIdentify(identify string, bookId int) (*Documen
 	return item.FindByIdentityFirst(identify, bookId)
 }
 
-//根据项目ID查询文档列表.
+//根据书籍ID查询文档列表.
 func (item *Document) FindListByBookId(bookId int) (docs []*Document, err error) {
 	o := orm.NewOrm()
 

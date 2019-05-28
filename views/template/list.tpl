@@ -20,7 +20,7 @@
         <tr>
             <td>{{$item.TemplateId}}</td>
             <td>{{$item.TemplateName}}</td>
-            <td>{{if $item.IsGlobal}}全局{{else}}项目{{end}}</td>
+            <td>{{if $item.IsGlobal}}全局{{else}}书籍{{end}}</td>
             <td>{{$item.CreateName}}</td>
             <td>{{date_format $item.CreateTime "2006-01-02 15:04:05"}}</td>
             <td>

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>团队项目 - Powered by MinDoc</title>
+    <title>团队书籍 - Powered by MinDoc</title>
 
     <!-- Bootstrap -->
     <link href="{{cdncss "/static/bootstrap/css/bootstrap.min.css"}}" rel="stylesheet" type="text/css">
@@ -23,8 +23,8 @@
             <div class="page-right">
                 <div class="m-box">
                     <div class="box-head">
-                        <strong class="box-title">{{.Model.TeamName}} - 团队项目</strong>
-                        <button type="button"  class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#addTeamBookDialogModal"><i class="fa fa-book" aria-hidden="true"></i> 添加项目</button>
+                        <strong class="box-title">{{.Model.TeamName}} - 团队书籍</strong>
+                        <button type="button"  class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#addTeamBookDialogModal"><i class="fa fa-book" aria-hidden="true"></i> 添加书籍</button>
                     </div>
                 </div>
                 <div class="box-body">
@@ -32,8 +32,8 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>项目名称</th>
-                                <th>项目作者</th>
+                                <th>书籍名称</th>
+                                <th>书籍作者</th>
                                 <th>加入时间</th>
                                 <th>操作</th>
                             </tr>
@@ -73,11 +73,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">加入项目</h4>
+                    <h4 class="modal-title" id="myModalLabel">加入书籍</h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">项目名称</label>
+                        <label class="col-sm-3 control-label">书籍名称</label>
                         <div class="col-sm-9">
                             <select class="js-data-example-ajax form-control" multiple="multiple" name="bookId" id="bookId"></select>
                         </div>
@@ -109,7 +109,7 @@
             beforeSubmit : function () {
                 var memberId = $.trim($("#bookId").val());
                 if(memberId === ""){
-                    return showError("项目不能为空");
+                    return showError("书籍不能为空");
                 }
                 $("#btnAddBook").button("loading");
             },

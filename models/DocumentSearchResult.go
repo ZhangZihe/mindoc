@@ -116,7 +116,7 @@ LIMIT ?, ?;`
 		}
 
 		totalCount += c
-		//查询项目的数量
+		//查询书籍的数量
 		sql4 := `SELECT count(*) as total_count FROM md_books as book
 WHERE book.privately_owned = 0 AND (book.book_name LIKE ? OR book.description LIKE ?);`
 
@@ -270,7 +270,7 @@ WHERE (book.privately_owned = 0 OR rel1.relationship_id > 0 or team.team_member_
 	return
 }
 
-//项目内搜索.
+//书籍内搜索.
 func (m *DocumentSearchResult) SearchDocument(keyword string, bookId int) (docs []*DocumentSearchResult, err error) {
 	o := orm.NewOrm()
 

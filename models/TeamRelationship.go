@@ -51,42 +51,42 @@ func (m *TeamRelationship) First(teamId int, cols ...string) (*TeamRelationship,
 	}
 	err := m.QueryTable().Filter("team_id", teamId).One(m, cols...)
 	if err != nil {
-		logs.Error("查询项目团队失败 ->", err)
+		logs.Error("查询书籍团队失败 ->", err)
 	}
 	return m, err
 }
 
-//查找指定项目的指定团队.
+//查找指定书籍的指定团队.
 func (m *TeamRelationship) FindByBookId(bookId int, teamId int) (*TeamRelationship, error) {
 	if teamId <= 0 || bookId <= 0 {
 		return nil, ErrInvalidParameter
 	}
 	err := m.QueryTable().Filter("team_id", teamId).Filter("book_id", bookId).One(m)
 	if err != nil {
-		logs.Error("查询项目团队失败 ->", err)
+		logs.Error("查询书籍团队失败 ->", err)
 	}
 	return m, err
 }
 
-//删除指定项目的指定团队.
+//删除指定书籍的指定团队.
 func (m *TeamRelationship) DeleteByBookId(bookId int, teamId int) error {
 	err := m.QueryTable().Filter("team_id", teamId).Filter("book_id", bookId).One(m)
 	if err != nil {
-		logs.Error("查询项目团队失败 ->", err)
+		logs.Error("查询书籍团队失败 ->", err)
 		return err
 	}
 	m.Include()
 	return m.Delete(m.TeamRelationshipId)
 }
 
-//保存团队项目.
+//保存团队书籍.
 func (m *TeamRelationship) Save(cols ...string) (err error) {
 	if m.TeamId <= 0 || m.BookId <= 0 {
 		return ErrInvalidParameter
 	}
 	if (m.TeamRelationshipId > 0 && m.QueryTable().Filter("book_id", m.BookId).Filter("team_id", m.TeamId).Filter("team_relationship_id__ne", m.TeamRelationshipId).Exist()) ||
 		m.TeamRelationshipId <= 0 && m.QueryTable().Filter("book_id", m.BookId).Filter("team_id", m.TeamId).Exist() {
-		return errors.New("当前团队已加入该项目")
+		return errors.New("当前团队已加入该书籍")
 	}
 	if m.TeamRelationshipId > 0 {
 		_, err = orm.NewOrm().Update(m)
@@ -94,7 +94,7 @@ func (m *TeamRelationship) Save(cols ...string) (err error) {
 		_, err = orm.NewOrm().Insert(m)
 	}
 	if err != nil {
-		logs.Error("保存团队项目时出错 ->", err)
+		logs.Error("保存团队书籍时出错 ->", err)
 	}
 	return
 }
@@ -106,12 +106,12 @@ func (m *TeamRelationship) Delete(teamRelId int) (err error) {
 	_, err = m.QueryTable().Filter("team_relationship_id", teamRelId).Delete()
 
 	if err != nil {
-		logs.Error("删除团队项目失败 ->", err)
+		logs.Error("删除团队书籍失败 ->", err)
 	}
 	return
 }
 
-//分页查询团队项目.
+//分页查询团队书籍.
 func (m *TeamRelationship) FindToPager(teamId, pageIndex, pageSize int) (list []*TeamRelationship, totalCount int, err error) {
 	if teamId <= 0 {
 		err = ErrInvalidParameter
@@ -124,13 +124,13 @@ func (m *TeamRelationship) FindToPager(teamId, pageIndex, pageSize int) (list []
 	_, err = o.QueryTable(m.TableNameWithPrefix()).Filter("team_id", teamId).OrderBy("-team_relationship_id").Offset(offset).Limit(pageSize).All(&list)
 
 	if err != nil {
-		logs.Error("查询团队项目时出错 ->", err)
+		logs.Error("查询团队书籍时出错 ->", err)
 		return
 	}
 	count, err := m.QueryTable().Filter("team_id", teamId).Count()
 
 	if err != nil {
-		logs.Error("查询团队项目时出错 ->", err)
+		logs.Error("查询团队书籍时出错 ->", err)
 		return
 	}
 	totalCount = int(count)
@@ -171,7 +171,7 @@ func (m *TeamRelationship) Include() (*TeamRelationship, error) {
 	return m, nil
 }
 
-//查询未加入团队的项目.
+//查询未加入团队的书籍.
 func (m *TeamRelationship) FindNotJoinBookByName(teamId int, bookName string, limit int) (*SelectMemberResult, error) {
 	if teamId <= 0 {
 		return nil, ErrInvalidParameter
@@ -188,7 +188,7 @@ and book.book_name like ? order by book_id desc limit ?;`
 	_, err := o.Raw(sql, teamId, "%"+bookName+"%", limit).QueryRows(&books)
 
 	if err != nil {
-		logs.Error("查询团队项目时出错 ->", err)
+		logs.Error("查询团队书籍时出错 ->", err)
 		return nil, err
 	}
 
@@ -206,7 +206,7 @@ and book.book_name like ? order by book_id desc limit ?;`
 	return &result, err
 }
 
-//查找指定项目中未加入的团队.
+//查找指定书籍中未加入的团队.
 func (m *TeamRelationship) FindNotJoinBookByBookIdentify(bookId int, teamName string, limit int) (*SelectMemberResult, error) {
 	if bookId <= 0 || teamName == "" {
 		return nil, ErrInvalidParameter
@@ -223,7 +223,7 @@ order by team.team_id desc limit ?;`
 	_, err := o.Raw(sql, bookId, "%"+teamName+"%", limit).QueryRows(&teams)
 
 	if err != nil {
-		logs.Error("查询团队项目时出错 ->", err)
+		logs.Error("查询团队书籍时出错 ->", err)
 		return nil, err
 	}
 
@@ -241,7 +241,7 @@ order by team.team_id desc limit ?;`
 	return &result, err
 }
 
-//查询指定项目的团队.
+//查询指定书籍的团队.
 func (m *TeamRelationship) FindByBookToPager(bookId, pageIndex, pageSize int) (list []*TeamRelationship, totalCount int, err error) {
 
 	if bookId <= 0 {
@@ -256,13 +256,13 @@ func (m *TeamRelationship) FindByBookToPager(bookId, pageIndex, pageSize int) (l
 	_, err = o.QueryTable(m.TableNameWithPrefix()).Filter("book_id", bookId).OrderBy("-team_relationship_id").Offset(offset).Limit(pageSize).All(&list)
 
 	if err != nil {
-		logs.Error("查询团队项目时出错 ->", err)
+		logs.Error("查询团队书籍时出错 ->", err)
 		return
 	}
 	count, err := m.QueryTable().Filter("book_id", bookId).Count()
 
 	if err != nil {
-		logs.Error("查询团队项目时出错 ->", err)
+		logs.Error("查询团队书籍时出错 ->", err)
 		return
 	}
 	totalCount = int(count)

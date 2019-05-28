@@ -84,7 +84,7 @@ func (m *BookResult) String() string {
 	return string(ret)
 }
 
-// 根据项目标识查询项目以及指定用户权限的信息.
+// 根据书籍标识查询书籍以及指定用户权限的信息.
 func (m *BookResult) FindByIdentify(identify string, memberId int) (*BookResult, error) {
 	if identify == "" || memberId <= 0 {
 		return m, ErrInvalidParameter
@@ -96,7 +96,7 @@ func (m *BookResult) FindByIdentify(identify string, memberId int) (*BookResult,
 	err := NewBook().QueryTable().Filter("identify", identify).One(&book)
 
 	if err != nil {
-		logs.Error("获取项目失败 ->", err)
+		logs.Error("获取书籍失败 ->", err)
 		return m, err
 	}
 
@@ -107,11 +107,11 @@ func (m *BookResult) FindByIdentify(identify string, memberId int) (*BookResult,
 	}
 	var relationship2 Relationship
 
-	//查找项目创始人
+	//查找书籍创始人
 	err = NewRelationship().QueryTable().Filter("book_id", book.BookId).Filter("role_id", 0).One(&relationship2)
 
 	if err != nil {
-		logs.Error("根据项目标识查询项目以及指定用户权限的信息 -> ", err)
+		logs.Error("根据书籍标识查询书籍以及指定用户权限的信息 -> ", err)
 		return m, ErrPermissionDenied
 	}
 
@@ -587,7 +587,7 @@ func exportMarkdown(p string, parentId int, bookId int, baseDir string, bookUrl 
 				originalImageUrl := string(images[0][2])
 				imageUrl := strings.Replace(string(originalImageUrl), "\\", "/", -1)
 
-				//如果是本地路径，则需要将图片复制到项目目录
+				//如果是本地路径，则需要将图片复制到书籍目录
 				if strings.HasPrefix(imageUrl, "http://") || strings.HasPrefix(imageUrl, "https://") {
 					imageExt := cryptil.Md5Crypt(imageUrl) + filepath.Ext(imageUrl)
 
@@ -615,7 +615,7 @@ func exportMarkdown(p string, parentId int, bookId int, baseDir string, bookUrl 
 				if len(links) > 0 && len(links[0]) >= 3 {
 					originalLink := links[0][2]
 
-					//如果当前链接位于当前项目内
+					//如果当前链接位于当前书籍内
 					if strings.HasPrefix(originalLink, bookUrl) {
 						docIdentify := strings.TrimSpace(strings.TrimPrefix(originalLink, bookUrl))
 						tempDoc := NewDocument()
@@ -693,7 +693,7 @@ func recursiveJoinDocumentIdentify(parentDocId int, identify string) string {
 	return identify
 }
 
-//查询项目的第一篇文档
+//查询书籍的第一篇文档
 func (m *BookResult) FindFirstDocumentByBookId(bookId int) (*Document, error) {
 
 	o := orm.NewOrm()

@@ -25,7 +25,7 @@
         <div class="row">
             <div class="page-left">
                 <ul class="menu">
-                    <li {{if eq .ControllerName "BookController"}}class="active"{{end}}><a href="{{urlfor "BookController.Index"}}" class="item"><i class="fa fa-sitemap" aria-hidden="true"></i> 我的项目</a> </li>
+                    <li {{if eq .ControllerName "BookController"}}class="active"{{end}}><a href="{{urlfor "BookController.Index"}}" class="item"><i class="fa fa-sitemap" aria-hidden="true"></i> 我的书籍</a> </li>
                     <li {{if eq .ControllerName "BlogController"}}class="active"{{end}}><a href="{{urlfor "BlogController.ManageList"}}" class="item"><i class="fa fa-file" aria-hidden="true"></i> 我的文章</a> </li>
                 </ul>
             </div>
@@ -62,7 +62,7 @@
                             <label>关联文档</label>
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" placeholder="请输入项目标识" name="bookIdentify" value="{{.Model.BookIdentify}}">
+                                    <input type="text" class="form-control" placeholder="请输入书籍标识" name="bookIdentify" value="{{.Model.BookIdentify}}">
                                 </div>
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" placeholder="请输入文档标识" name="documentIdentify" value="{{.Model.DocumentIdentify}}">
@@ -87,7 +87,7 @@
                         </div>
                         <div class="form-group">
                             <label>文章摘要</label>
-                            <textarea rows="3" class="form-control" name="excerpt" style="height: 90px" placeholder="项目描述">{{.Model.BlogExcerpt}}</textarea>
+                            <textarea rows="3" class="form-control" name="excerpt" style="height: 90px" placeholder="书籍描述">{{.Model.BlogExcerpt}}</textarea>
                             <p class="text">文章摘要不超过500个字符</p>
                         </div>
 

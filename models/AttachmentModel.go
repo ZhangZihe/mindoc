@@ -119,7 +119,7 @@ func (m *Attachment) FindToPager(pageIndex, pageSize int) (attachList []*Attachm
 		attach := &AttachmentResult{}
 		attach.Attachment = *item
 		attach.FileShortSize = filetil.FormatBytes(int64(attach.FileSize))
-		//当项目ID为0标识是文章的附件
+		//当书籍ID为0标识是文章的附件
 		if item.BookId == 0 && item.DocumentId > 0 {
 			blog := NewBlog()
 			if err := o.QueryTable(blog.TableNameWithPrefix()).Filter("blog_id",item.DocumentId).One(blog,"blog_title");err  == nil {
@@ -142,7 +142,7 @@ func (m *Attachment) FindToPager(pageIndex, pageSize int) (attachList []*Attachm
 				}
 
 			} else {
-				attach.BookName = "[项目不存在]"
+				attach.BookName = "[书籍不存在]"
 			}
 		}
 		attach.LocalHttpPath = strings.Replace(item.FilePath, "\\", "/", -1)

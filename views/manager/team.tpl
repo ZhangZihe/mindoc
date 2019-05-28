@@ -47,7 +47,7 @@
                                 <tr>
                                     <th>团队名称</th>
                                     <th width="150px">成员数量</th>
-                                    <th width="150px">项目数量</th>
+                                    <th width="150px">书籍数量</th>
                                     <th align="center" width="220px">操作</th>
                                 </tr>
                                 </thead>
@@ -57,7 +57,7 @@
                                     <td>${item.member_count}</td>
                                     <td>${item.book_count}</td>
                                     <td>
-                                        <a :href="'{{urlfor "ManagerController.TeamBookList" ":id" ""}}' + item.team_id" class="btn btn-primary btn-sm">项目</a>
+                                        <a :href="'{{urlfor "ManagerController.TeamBookList" ":id" ""}}' + item.team_id" class="btn btn-primary btn-sm">书籍</a>
                                         <a :href="'{{urlfor "ManagerController.TeamMemberList" ":id" ""}}' + item.team_id" type="button" class="btn btn-success btn-sm">成员</a>
                                         <button type="button" class="btn btn-sm btn-default" @click="editTeam(item.team_id)">编辑</button>
                                         <button type="button" class="btn btn-danger btn-sm" @click="deleteTeam(item.team_id,$event)" data-loading-text="删除中">删除</button>

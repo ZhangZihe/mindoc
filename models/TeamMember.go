@@ -238,7 +238,7 @@ func (m *TeamMember) FindByBookIdAndMemberId(bookId,memberId int) (*TeamMember, 
 	if bookId <= 0 || memberId <= 0 {
 		return nil,ErrInvalidParameter
 	}
-	//一个用户可能在多个团队中，且一个项目可能有多个团队参与。因此需要查询用户最大权限。
+	//一个用户可能在多个团队中，且一个书籍可能有多个团队参与。因此需要查询用户最大权限。
 	sql := `select *
 from md_team_member as team
 where team.team_id in (select rel.team_id from md_team_relationship as rel where rel.book_id = ?) 
@@ -249,7 +249,7 @@ and team.member_id = ? order by team.role_id asc limit 1;`
 	err := o.Raw(sql,bookId,memberId).QueryRow(m)
 
 	if err != nil {
-		logs.Error("查询用户项目所在团队失败 ->bookId=",bookId," memberId=", memberId, err)
+		logs.Error("查询用户书籍所在团队失败 ->bookId=",bookId," memberId=", memberId, err)
 		return nil,err
 	}
 	return m,nil

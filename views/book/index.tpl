@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>我的项目 - Powered by MinDoc</title>
+    <title>我的书籍 - Powered by MinDoc</title>
 
     <!-- Bootstrap -->
     <link href="{{cdncss "/static/bootstrap/css/bootstrap.min.css"}}" rel="stylesheet" type="text/css">
@@ -28,17 +28,17 @@
         <div class="row">
             <div class="page-left">
                 <ul class="menu">
-                    <li {{if eq .ControllerName "BookController"}}class="active"{{end}}><a href="{{urlfor "BookController.Index"}}" class="item"><i class="fa fa-sitemap" aria-hidden="true"></i> 我的项目</a> </li>
+                    <li {{if eq .ControllerName "BookController"}}class="active"{{end}}><a href="{{urlfor "BookController.Index"}}" class="item"><i class="fa fa-sitemap" aria-hidden="true"></i> 我的书籍</a> </li>
                     <li {{if eq .ControllerName "BlogController"}}class="active"{{end}}><a href="{{urlfor "BlogController.ManageList"}}" class="item"><i class="fa fa-file" aria-hidden="true"></i> 我的文章</a> </li>
                 </ul>
             </div>
             <div class="page-right">
                 <div class="m-box">
                     <div class="box-head">
-                        <strong class="box-title">项目列表</strong>
+                        <strong class="box-title">书籍列表</strong>
                         &nbsp;
-                        <button type="button" data-toggle="modal" data-target="#addBookDialogModal" class="btn btn-success btn-sm pull-right">添加项目</button>
-                        <button type="button" data-toggle="modal" data-target="#importBookDialogModal" class="btn btn-primary btn-sm pull-right" style="margin-right: 5px;">导入项目</button>
+                        <button type="button" data-toggle="modal" data-target="#addBookDialogModal" class="btn btn-success btn-sm pull-right">添加书籍</button>
+                        <button type="button" data-toggle="modal" data-target="#importBookDialogModal" class="btn btn-primary btn-sm pull-right" style="margin-right: 5px;">导入书籍</button>
                     </div>
                 </div>
                 <div class="box-body" id="bookList">
@@ -51,7 +51,7 @@
                         <div class="list-item" v-for="item in lists">
                             <div class="book-title">
                                 <div class="pull-left">
-                                    <a :href="'{{.BaseUrl}}/book/' + item.identify + '/dashboard'" title="项目概要" data-toggle="tooltip">
+                                    <a :href="'{{.BaseUrl}}/book/' + item.identify + '/dashboard'" title="书籍概要" data-toggle="tooltip">
                                        <template v-if="item.privately_owned == 0">
                                            <i class="fa fa-unlock" aria-hidden="true"></i>
                                        </template>
@@ -94,7 +94,7 @@
                                         &nbsp;
                                     </template>
                                     <template v-else="">
-                                        <a :href="'{{.BaseUrl}}/book/' + item.identify + '/dashboard'" title="项目概要" style="font-size: 12px;">
+                                        <a :href="'{{.BaseUrl}}/book/' + item.identify + '/dashboard'" title="书籍概要" style="font-size: 12px;">
                                         ${item.description}
                                         </a>
                                     </template>
@@ -106,7 +106,7 @@
                                 </span>
                                 <span title="创建者" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-user"></i> ${item.create_name}</span>
                                 <span title="文档数量" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-pie-chart"></i> ${item.doc_count}</span>
-                                <span title="项目角色" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-user-secret"></i> ${item.role_name}</span>
+                                <span title="书籍角色" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-user-secret"></i> ${item.role_name}</span>
                                 <template v-if="item.last_modify_text !== ''">
                                     <span title="最后编辑" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-pencil"></i> 最后编辑: ${item.last_modify_text}</span>
                                 </template>
@@ -133,33 +133,33 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">添加项目</h4>
+                <h4 class="modal-title" id="myModalLabel">添加书籍</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <div class="pull-left" style="width: 620px">
                         <div class="form-group required">
-                            <label class="text-label col-sm-2">项目空间</label>
+                            <label class="text-label col-sm-2">文档库</label>
                             <div class="col-sm-10">
                                 <select class="js-data-example-ajax-add form-control" multiple="multiple" name="itemId" id="itemId">
                                 {{if .Item}}<option value="{{.Item.ItemId}}" selected>{{.Item.ItemName}}</option> {{end}}
                                 </select>
-                                <p class="text">每个项目必须归属一个项目空间，超级管理员可在后台管理和维护</p>
+                                <p class="text">每个书籍必须归属一个文档库，超级管理员可在后台管理和维护</p>
                             </div>
                             <div class="clearfix"></div>
                         </div>
                         <div class="form-group required">
-                            <label class="text-label col-sm-2">项目标题</label>
+                            <label class="text-label col-sm-2">书籍标题</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" placeholder="标题(不超过100字)" name="book_name" id="bookName">
-                                <p class="text">项目名称不能超过100字符</p>
+                                <p class="text">书籍名称不能超过100字符</p>
                             </div>
                             <div class="clearfix"></div>
                         </div>
                         <div class="form-group required">
-                           <label class="text-label col-sm-2">项目标识</label>
+                           <label class="text-label col-sm-2">书籍标识</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" placeholder="项目唯一标识(不超过50字)" name="identify" id="identify">
+                                <input type="text" class="form-control" placeholder="书籍唯一标识(不超过50字)" name="identify" id="identify">
                                 <p class="text">文档标识只能包含小写字母、数字，以及“-”、“.”和“_”符号.</p>
                             </div>
                             <div class="clearfix"></div>
@@ -183,7 +183,7 @@
                     </div>
                     <div class="pull-right text-center" style="width: 235px;">
                         <canvas id="bookCover" height="230px" width="170px"><img src="{{cdnimg "/static/images/book.jpg"}}"> </canvas>
-                        <p class="text">项目图片可在项目设置中修改</p>
+                        <p class="text">书籍图片可在书籍设置中修改</p>
                     </div>
                 </div>
 
@@ -207,30 +207,30 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">导入项目</h4>
+                    <h4 class="modal-title">导入书籍</h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="form-group required">
-                            <label class="text-label">项目空间</label>
+                            <label class="text-label">文档库</label>
                             <select class="js-data-example-ajax-import form-control" multiple="multiple" name="itemId">
                                 {{if .Item}}<option value="{{.Item.ItemId}}" selected>{{.Item.ItemName}}</option> {{end}}
                             </select>
-                            <p class="text">每个项目必须归属一个项目空间，超级管理员可在后台管理和维护</p>
+                            <p class="text">每个书籍必须归属一个文档库，超级管理员可在后台管理和维护</p>
                         </div>
                         <div class="form-group required">
-                            <label class="text-label">项目标题</label>
-                            <input type="text" class="form-control" placeholder="项目标题(不超过100字)" name="book_name" maxlength="100" value="">
-                            <p class="text">项目名称不能超过100字符</p>
+                            <label class="text-label">书籍标题</label>
+                            <input type="text" class="form-control" placeholder="书籍标题(不超过100字)" name="book_name" maxlength="100" value="">
+                            <p class="text">书籍名称不能超过100字符</p>
                         </div>
                         <div class="form-group required">
-                            <label class="text-label">项目标识</label>
-                            <input type="text" class="form-control"  placeholder="项目唯一标识(不超过50字)" name="identify" value="">
+                            <label class="text-label">书籍标识</label>
+                            <input type="text" class="form-control"  placeholder="书籍唯一标识(不超过50字)" name="identify" value="">
                             <div class="clearfix"></div>
                             <p class="text">文档标识只能包含小写字母、数字，以及“-”、“.”和“_”符号.</p>
                         </div>
                         <div class="form-group">
-                            <label class="text-label">项目描述</label>
+                            <label class="text-label">书籍描述</label>
                             <textarea name="description" id="description" class="form-control" placeholder="描述信息不超过500个字符" style="height: 90px;"></textarea>
                         </div>
                         <div class="form-group">
@@ -273,12 +273,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">删除项目</h4>
+                    <h4 class="modal-title">删除书籍</h4>
                 </div>
                 <div class="modal-body">
-                    <span style="font-size: 14px;font-weight: 400;">确定删除项目吗？</span>
+                    <span style="font-size: 14px;font-weight: 400;">确定删除书籍吗？</span>
                     <p></p>
-                    <p class="text error-message">删除项目后将无法找回。</p>
+                    <p class="text error-message">删除书籍后将无法找回。</p>
                 </div>
                 <div class="modal-footer">
                     <span id="form-error-message2" class="error-message"></span>
@@ -302,7 +302,7 @@
 <script src="{{cdnjs "/static/js/main.js"}}" type="text/javascript"></script>
 <script type="text/javascript">
     /**
-     * 绘制项目封面
+     * 绘制书籍封面
      * @param $id
      * @param $font
      */
@@ -388,14 +388,14 @@
         return new Blob([ab], {type: mimeString});
     }
     /**
-     * 删除项目
+     * 删除书籍
      */
     function deleteBook($id) {
         $("#deleteBookModal").find("input[name='identify']").val($id);
         $("#deleteBookModal").modal("show");
     }
     /**
-     * 复制项目
+     * 复制书籍
      * */
     function copyBook($id){
         var index = layer.load()
@@ -422,7 +422,7 @@
 
     $(function () {
         /**
-         * 处理创建项目弹窗
+         * 处理创建书籍弹窗
          * */
         $("#addBookDialogModal").on("show.bs.modal",function () {
             window.bookDialogModal = $(this).find("#addBookDialogForm").html();
@@ -453,7 +453,7 @@
             $(this).find("#addBookDialogForm").html(window.bookDialogModal);
         });
         /**
-         * 处理导入项目弹窗
+         * 处理导入书籍弹窗
          * */
         $("#importBookDialogModal").on("show.bs.modal",function () {
             window.importBookDialogModal = $(this).find("#importBookDialogForm").html();
@@ -506,29 +506,29 @@
         });
 
         /**
-         * 创建项目
+         * 创建书籍
          */
         $("body").on("click","#btnSaveDocument",function () {
             var $this = $(this);
 
             var itemId = $("#itemId").val();
             if (itemId <= 0) {
-                return showError("请选择项目空间")
+                return showError("请选择文档库")
             }
             var bookName = $.trim($("#bookName").val());
             if (bookName === "") {
-                return showError("项目标题不能为空")
+                return showError("书籍标题不能为空")
             }
             if (bookName.length > 100) {
-                return showError("项目标题必须小于100字符");
+                return showError("书籍标题必须小于100字符");
             }
 
             var identify = $.trim($("#identify").val());
             if (identify === "") {
-                return showError("项目标识不能为空");
+                return showError("书籍标识不能为空");
             }
             if (identify.length > 50) {
-                return showError("项目标识必须小于50字符");
+                return showError("书籍标识必须小于50字符");
             }
             var description = $.trim($("#description").val());
 
@@ -581,21 +581,21 @@
 
             var itemId = $then.find("input[name='itemId']").val();
             if (itemId <= 0) {
-                return showError("请选择项目空间")
+                return showError("请选择文档库")
             }
 
             var bookName = $.trim($then.find("input[name='book_name']").val());
 
             if (bookName === "") {
-                return showError("项目标题不能为空","#import-book-form-error-message");
+                return showError("书籍标题不能为空","#import-book-form-error-message");
             }
             if (bookName.length > 100) {
-                return showError("项目标题必须小于100字符","#import-book-form-error-message");
+                return showError("书籍标题必须小于100字符","#import-book-form-error-message");
             }
 
             var identify = $.trim($then.find("input[name='identify']").val());
             if (identify === "") {
-                return showError("项目标识不能为空","#import-book-form-error-message");
+                return showError("书籍标识不能为空","#import-book-form-error-message");
             }
             var description = $.trim($then.find('textarea[name="description"]').val());
             if (description.length > 500) {
@@ -621,7 +621,7 @@
         });
 
         /**
-         * 删除项目
+         * 删除书籍
          */
         $("#deleteBookForm").ajaxForm({
             beforeSubmit : function () {

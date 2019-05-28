@@ -19,7 +19,7 @@
     {{template "widgets/header.tpl" .}}
     <div class="container manual-body">
         <div class="search-head">
-            <strong class="search-title">显示标签为"{{.LabelName}}"的项目</strong>
+            <strong class="search-title">显示标签为"{{.LabelName}}"的书籍</strong>
         </div>
         <div class="row">
             <div class="manual-list">
@@ -44,7 +44,7 @@
                     </dl>
                 </div>
                 {{else}}
-                    <div class="text-center" style="height: 200px;margin: 100px;font-size: 28px;">暂无项目</div>
+                    <div class="text-center" style="height: 200px;margin: 100px;font-size: 28px;">暂无书籍</div>
                 {{end}}
 
                 <div class="clearfix"></div>

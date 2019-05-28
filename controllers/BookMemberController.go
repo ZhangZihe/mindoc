@@ -38,7 +38,7 @@ func (c *BookMemberController) AddMember() {
 	}
 
 	if _, err := models.NewRelationship().FindForRoleId(book.BookId, member.MemberId); err == nil {
-		c.JsonResult(6003, "用户已存在该项目中")
+		c.JsonResult(6003, "用户已存在该书籍中")
 	}
 
 	relationship := models.NewRelationship()
@@ -58,7 +58,7 @@ func (c *BookMemberController) AddMember() {
 	c.JsonResult(500, err.Error())
 }
 
-// 变更指定用户在指定项目中的权限
+// 变更指定用户在指定书籍中的权限
 func (c *BookMemberController) ChangeRole() {
 	identify := c.GetString("identify")
 	memberId, _ := c.GetInt("member_id", 0)
@@ -77,7 +77,7 @@ func (c *BookMemberController) ChangeRole() {
 			c.JsonResult(403, "权限不足")
 		}
 		if err == orm.ErrNoRows {
-			c.JsonResult(404, "项目不存在")
+			c.JsonResult(404, "书籍不存在")
 		}
 		c.JsonResult(6002, err.Error())
 	}
@@ -97,7 +97,7 @@ func (c *BookMemberController) ChangeRole() {
 	relationship, err := models.NewRelationship().UpdateRoleId(book.BookId, memberId, conf.BookRole(role))
 
 	if err != nil {
-		logs.Error("变更用户在项目中的权限 => ", err)
+		logs.Error("变更用户在书籍中的权限 => ", err)
 		c.JsonResult(6005, err.Error())
 	}
 
@@ -128,7 +128,7 @@ func (c *BookMemberController) RemoveMember() {
 			c.JsonResult(403, "权限不足")
 		}
 		if err == orm.ErrNoRows {
-			c.JsonResult(404, "项目不存在")
+			c.JsonResult(404, "书籍不存在")
 		}
 		c.JsonResult(6002, err.Error())
 	}
@@ -153,7 +153,7 @@ func (c *BookMemberController) IsPermission() (*models.BookResult, error) {
 			return book, errors.New("权限不足")
 		}
 		if err == orm.ErrNoRows {
-			return book, errors.New("项目不存在")
+			return book, errors.New("书籍不存在")
 		}
 		return book, err
 	}

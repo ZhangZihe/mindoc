@@ -48,7 +48,7 @@ const (
 	BookObserver
 )
 
-//项目角色
+//书籍角色
 type BookRole int
 
 const (
@@ -151,7 +151,7 @@ func GetEnableExport() bool {
 	return beego.AppConfig.DefaultBool("enable_export", true)
 }
 
-//同一项目导出线程的并发数
+//同一书籍导出线程的并发数
 func GetExportProcessNum() int {
 	exportProcessNum := beego.AppConfig.DefaultInt("export_process_num", 1)
 
@@ -161,7 +161,7 @@ func GetExportProcessNum() int {
 	return exportProcessNum;
 }
 
-//导出项目队列的并发数量
+//导出书籍队列的并发数量
 func GetExportLimitNum() int {
 	exportLimitNum := beego.AppConfig.DefaultInt("export_limit_num", 1)
 
@@ -181,7 +181,7 @@ func GetExportQueueLimitNum() int {
 	return exportQueueLimitNum
 }
 
-//默认导出项目的缓存目录
+//默认导出书籍的缓存目录
 func GetExportOutputPath() string {
 	exportOutputPath := filepath.Join(beego.AppConfig.DefaultString("export_output_path", filepath.Join(WorkingDirectory, "cache")), "books")
 

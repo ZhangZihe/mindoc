@@ -211,13 +211,13 @@
     <div class="manual-mask"></div>
 </div>
 {{if .Model.IsEnableShare}}
-<!-- 分享项目 -->
+<!-- 分享书籍 -->
 <div class="modal fade" id="shareProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">项目分享</h4>
+                <h4 class="modal-title" id="myModalLabel">书籍分享</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -226,9 +226,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="password" class="col-sm-2 control-label">项目地址</label>
+                    <label for="password" class="col-sm-2 control-label">书籍地址</label>
                     <div class="col-sm-10">
-                        <input type="text" value="{{urlfor "DocumentController.Index" ":key" .Model.Identify}}" class="form-control" onmouseover="this.select()" id="projectUrl" title="项目地址">
+                        <input type="text" value="{{urlfor "DocumentController.Index" ":key" .Model.Identify}}" class="form-control" onmouseover="this.select()" id="projectUrl" title="书籍地址">
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -240,13 +240,13 @@
     </div>
 </div>
 {{end}}
-<!-- 下载项目 -->
+<!-- 下载书籍 -->
 <div class="modal fade" id="downloadBookModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">项目分享</h4>
+                <h4 class="modal-title" id="myModalLabel">书籍分享</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -255,9 +255,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="password" class="col-sm-2 control-label">项目地址</label>
+                    <label for="password" class="col-sm-2 control-label">书籍地址</label>
                     <div class="col-sm-10">
-                        <input type="text" value="{{urlfor "DocumentController.Index" ":key" .Model.Identify}}" class="form-control" onmouseover="this.select()" id="projectUrl" title="项目地址">
+                        <input type="text" value="{{urlfor "DocumentController.Index" ":key" .Model.Identify}}" class="form-control" onmouseover="this.select()" id="projectUrl" title="书籍地址">
                     </div>
                     <div class="clearfix"></div>
                 </div>

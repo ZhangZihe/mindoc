@@ -85,7 +85,7 @@ func (t *Team) Delete(id int) (err error) {
 	_,err = o.Raw("delete from md_team_relationship where team_id=?;",id).Exec()
 
 	if err != nil {
-		logs.Error("删除团队项目时出错 ->", err)
+		logs.Error("删除团队书籍时出错 ->", err)
 		o.Rollback()
 		return err
 	}

@@ -42,7 +42,7 @@ func (c *DocumentController) Index() {
 	token := c.GetString("token")
 
 	if identify == "" {
-		c.ShowErrorPage(404, "项目不存在或已删除")
+		c.ShowErrorPage(404, "书籍不存在或已删除")
 	}
 
 	// 如果没有开启匿名访问则跳转到登录
@@ -75,10 +75,10 @@ func (c *DocumentController) Index() {
 
 	if err != nil {
 		if err == orm.ErrNoRows {
-			c.ShowErrorPage(404, "当前项目没有文档")
+			c.ShowErrorPage(404, "当前书籍没有文档")
 		} else {
-			logs.Error("生成项目文档树时出错 -> ", err)
-			c.ShowErrorPage(500, "生成项目文档树时出错")
+			logs.Error("生成书籍文档树时出错 -> ", err)
+			c.ShowErrorPage(500, "生成书籍文档树时出错")
 		}
 	}
 	c.Data["Model"] = bookResult
@@ -97,7 +97,7 @@ func (c *DocumentController) Read() {
 	c.Data["DocumentId"] = id
 
 	if identify == "" || id == "" {
-		c.ShowErrorPage(404, "项目不存或已删除")
+		c.ShowErrorPage(404, "书籍不存或已删除")
 	}
 
 	// 如果没有开启匿名访问则跳转到登录
@@ -159,9 +159,9 @@ func (c *DocumentController) Read() {
 	tree, err := models.NewDocument().CreateDocumentTreeForHtml(bookResult.BookId, doc.DocumentId)
 
 	if err != nil && err != orm.ErrNoRows {
-		logs.Error("生成项目文档树时出错 ->", err)
+		logs.Error("生成书籍文档树时出错 ->", err)
 
-		c.ShowErrorPage(500, "生成项目文档树时出错")
+		c.ShowErrorPage(500, "生成书籍文档树时出错")
 	}
 
 	c.Data["Description"] = utils.AutoSummary(doc.Release, 120)
@@ -178,7 +178,7 @@ func (c *DocumentController) Edit() {
 
 	identify := c.Ctx.Input.Param(":key")
 	if identify == "" {
-		c.ShowErrorPage(404, "无法解析项目标识")
+		c.ShowErrorPage(404, "无法解析书籍标识")
 	}
 
 	bookResult := models.NewBookResult()
@@ -188,7 +188,7 @@ func (c *DocumentController) Edit() {
 	if c.Member.IsAdministrator() {
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookResult = models.NewBookResult().ToBookResult(*book)
@@ -197,14 +197,14 @@ func (c *DocumentController) Edit() {
 
 		if err != nil {
 			if err == orm.ErrNoRows || err == models.ErrPermissionDenied {
-				c.ShowErrorPage(403, "项目不存在或没有权限")
+				c.ShowErrorPage(403, "书籍不存在或没有权限")
 			} else {
-				logs.Error("查询项目时出错 -> ", err)
-				c.ShowErrorPage(500, "查询项目时出错")
+				logs.Error("查询书籍时出错 -> ", err)
+				c.ShowErrorPage(500, "查询书籍时出错")
 			}
 		}
 		if bookResult.RoleId == conf.BookObserver {
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 	}
 
@@ -272,7 +272,7 @@ func (c *DocumentController) Create() {
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
 			logs.Error(err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = book.BookId
@@ -281,7 +281,7 @@ func (c *DocumentController) Create() {
 
 		if err != nil || bookResult.RoleId == conf.BookObserver {
 			logs.Error("FindByIdentify => ", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = bookResult.BookId
@@ -412,7 +412,7 @@ func (c *DocumentController) Upload() {
 		}
 
 		if doc.BookId != bookId {
-			c.JsonResult(6008, "文档不属于指定的项目")
+			c.JsonResult(6008, "文档不属于指定的书籍")
 		}
 	}
 
@@ -509,24 +509,24 @@ func (c *DocumentController) DownloadAttachment() {
 
 	bookId := 0
 
-	// 判断用户是否参与了项目
+	// 判断用户是否参与了书籍
 	bookResult, err := models.NewBookResult().FindByIdentify(identify, memberId)
 
 	if err != nil {
-		// 判断项目公开状态
+		// 判断书籍公开状态
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
 			if err == orm.ErrNoRows {
-				c.ShowErrorPage(404, "项目不存在或已删除")
+				c.ShowErrorPage(404, "书籍不存在或已删除")
 			} else {
-				logs.Error("查找项目时出错 ->", err)
+				logs.Error("查找书籍时出错 ->", err)
 				c.ShowErrorPage(500, "系统错误")
 			}
 		}
 
 		// 如果不是超级管理员则判断权限
 		if c.Member == nil || c.Member.Role != conf.MemberSuperRole {
-			// 如果项目是私有的，并且 token 不正确
+			// 如果书籍是私有的，并且 token 不正确
 			if (book.PrivatelyOwned == 1 && token == "") || (book.PrivatelyOwned == 1 && book.PrivateToken != token) {
 				c.ShowErrorPage(403, "权限不足")
 			}
@@ -617,7 +617,7 @@ func (c *DocumentController) Delete() {
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
 			logs.Error("FindByIdentify => ", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = book.BookId
@@ -626,7 +626,7 @@ func (c *DocumentController) Delete() {
 
 		if err != nil || bookResult.RoleId == conf.BookObserver {
 			logs.Error("FindByIdentify => ", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = bookResult.BookId
@@ -642,12 +642,12 @@ func (c *DocumentController) Delete() {
 		logs.Error("Delete => ", err)
 		c.JsonResult(6003, "删除失败")
 	}
-	// 如果文档所属项目错误
+	// 如果文档所属书籍错误
 	if doc.BookId != bookId {
 		c.JsonResult(6004, "参数错误")
 	}
 
-	// 递归删除项目下的文档以及子文档
+	// 递归删除书籍下的文档以及子文档
 	err = doc.RecursiveDocument(doc.DocumentId)
 	if err != nil {
 		c.JsonResult(6005, "删除失败")
@@ -676,7 +676,7 @@ func (c *DocumentController) Content() {
 	if c.Member.IsAdministrator() {
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = book.BookId
@@ -685,8 +685,8 @@ func (c *DocumentController) Content() {
 		bookResult, err := models.NewBookResult().FindByIdentify(identify, c.Member.MemberId)
 
 		if err != nil || bookResult.RoleId == conf.BookObserver {
-			logs.Error("项目不存在或权限不足 -> ", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			logs.Error("书籍不存在或权限不足 -> ", err)
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = bookResult.BookId
@@ -710,7 +710,7 @@ func (c *DocumentController) Content() {
 		}
 
 		if doc.BookId != bookId {
-			c.JsonResult(6004, "保存的文档不属于指定项目")
+			c.JsonResult(6004, "保存的文档不属于指定书籍")
 		}
 
 		if doc.Version != version && !strings.EqualFold(isCover, "yes") {
@@ -825,10 +825,10 @@ func (c *DocumentController) Export() {
 		book, err := models.NewBook().FindByIdentify(identify)
 		if err != nil {
 			if err == orm.ErrNoRows {
-				c.ShowErrorPage(404, "项目不存在")
+				c.ShowErrorPage(404, "书籍不存在")
 			} else {
-				logs.Error("查找项目时出错 ->", err)
-				c.ShowErrorPage(500, "查找项目时出错")
+				logs.Error("查找书籍时出错 ->", err)
+				c.ShowErrorPage(500, "查找书籍时出错")
 			}
 		}
 		bookResult = models.NewBookResult().ToBookResult(*book)
@@ -836,7 +836,7 @@ func (c *DocumentController) Export() {
 		bookResult = c.isReadable(identify, token)
 	}
 	if !bookResult.IsDownload {
-		c.ShowErrorPage(200, "当前项目没有开启导出功能")
+		c.ShowErrorPage(200, "当前书籍没有开启导出功能")
 	}
 
 	if !strings.HasPrefix(bookResult.Cover, "http:://") && !strings.HasPrefix(bookResult.Cover, "https:://") {
@@ -845,7 +845,7 @@ func (c *DocumentController) Export() {
 
 	if output == "markdown" {
 		if bookResult.Editor != "markdown" {
-			c.ShowErrorPage(500, "当前项目不支持Markdown编辑器")
+			c.ShowErrorPage(500, "当前书籍不支持Markdown编辑器")
 		}
 		p, err := bookResult.ExportMarkdown(c.CruSession.SessionID())
 
@@ -891,10 +891,10 @@ func (c *DocumentController) Export() {
 		c.ShowErrorPage(200, "不支持的文件格式")
 	}
 
-	c.ShowErrorPage(404, "项目没有导出文件")
+	c.ShowErrorPage(404, "书籍没有导出文件")
 }
 
-// 生成项目访问的二维码
+// 生成书籍访问的二维码
 func (c *DocumentController) QrCode() {
 	c.Prepare()
 
@@ -902,7 +902,7 @@ func (c *DocumentController) QrCode() {
 
 	book, err := models.NewBook().FindByIdentify(identify)
 	if err != nil || book.BookId <= 0 {
-		c.ShowErrorPage(404, "项目不存在")
+		c.ShowErrorPage(404, "书籍不存在")
 	}
 
 	uri := conf.URLFor("DocumentController.Index", ":key", identify)
@@ -929,7 +929,7 @@ func (c *DocumentController) QrCode() {
 	}
 }
 
-// 项目内搜索
+// 书籍内搜索
 func (c *DocumentController) Search() {
 	c.Prepare()
 
@@ -984,8 +984,8 @@ func (c *DocumentController) History() {
 	if c.Member.IsAdministrator() {
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
-			logs.Error("查找项目失败 ->", err)
-			c.Data["ErrorMessage"] = "项目不存在或权限不足"
+			logs.Error("查找书籍失败 ->", err)
+			c.Data["ErrorMessage"] = "书籍不存在或权限不足"
 			return
 		}
 
@@ -994,8 +994,8 @@ func (c *DocumentController) History() {
 	} else {
 		bookResult, err := models.NewBookResult().FindByIdentify(identify, c.Member.MemberId)
 		if err != nil || bookResult.RoleId == conf.BookObserver {
-			logs.Error("查找项目失败 ->", err)
-			c.Data["ErrorMessage"] = "项目不存在或权限不足"
+			logs.Error("查找书籍失败 ->", err)
+			c.Data["ErrorMessage"] = "书籍不存在或权限不足"
 			return
 		}
 
@@ -1015,7 +1015,7 @@ func (c *DocumentController) History() {
 		return
 	}
 
-	// 如果文档所属项目错误
+	// 如果文档所属书籍错误
 	if doc.BookId != bookId {
 		c.Data["ErrorMessage"] = "参数错误"
 		return
@@ -1057,16 +1057,16 @@ func (c *DocumentController) DeleteHistory() {
 	if c.Member.IsAdministrator() {
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
-			logs.Error("查找项目失败 ->", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			logs.Error("查找书籍失败 ->", err)
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = book.BookId
 	} else {
 		bookResult, err := models.NewBookResult().FindByIdentify(identify, c.Member.MemberId)
 		if err != nil || bookResult.RoleId == conf.BookObserver {
-			logs.Error("查找项目失败 ->", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			logs.Error("查找书籍失败 ->", err)
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = bookResult.BookId
@@ -1082,7 +1082,7 @@ func (c *DocumentController) DeleteHistory() {
 		c.JsonResult(6001, "获取历史失败")
 	}
 
-	// 如果文档所属项目错误
+	// 如果文档所属书籍错误
 	if doc.BookId != bookId {
 		c.JsonResult(6001, "参数错误")
 	}
@@ -1116,7 +1116,7 @@ func (c *DocumentController) RestoreHistory() {
 		book, err := models.NewBook().FindByFieldFirst("identify", identify)
 		if err != nil {
 			logs.Error("FindByIdentify => ", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = book.BookId
@@ -1124,7 +1124,7 @@ func (c *DocumentController) RestoreHistory() {
 		bookResult, err := models.NewBookResult().FindByIdentify(identify, c.Member.MemberId)
 		if err != nil || bookResult.RoleId == conf.BookObserver {
 			logs.Error("FindByIdentify => ", err)
-			c.JsonResult(6002, "项目不存在或权限不足")
+			c.JsonResult(6002, "书籍不存在或权限不足")
 		}
 
 		bookId = bookResult.BookId
@@ -1140,7 +1140,7 @@ func (c *DocumentController) RestoreHistory() {
 		c.JsonResult(6001, "获取历史失败")
 	}
 
-	// 如果文档所属项目错误
+	// 如果文档所属书籍错误
 	if doc.BookId != bookId {
 		c.JsonResult(6001, "参数错误")
 	}
@@ -1223,7 +1223,7 @@ func (c *DocumentController) isReadable(identify, token string) *models.BookResu
 
 	if err != nil {
 		logs.Error(err)
-		c.ShowErrorPage(500, "项目不存在")
+		c.ShowErrorPage(500, "书籍不存在")
 	}
 	bookResult := models.NewBookResult().ToBookResult(*book)
 	isOk := false
@@ -1241,8 +1241,8 @@ func (c *DocumentController) isReadable(identify, token string) *models.BookResu
 		if s, ok := c.GetSession(identify).(string); !ok || (!strings.EqualFold(s, book.PrivateToken) && !strings.EqualFold(s, book.BookPassword)) {
 
 			if book.PrivateToken != "" && !isOk && token != "" {
-				// 如果有访问的 Token，并且该项目设置了访问 Token，并且和用户提供的相匹配，则记录到 Session 中。
-				// 如果用户未提供 Token 且用户登录了，则判断用户是否参与了该项目。
+				// 如果有访问的 Token，并且该书籍设置了访问 Token，并且和用户提供的相匹配，则记录到 Session 中。
+				// 如果用户未提供 Token 且用户登录了，则判断用户是否参与了该书籍。
 				// 如果用户未登录，则从 Session 中读取 Token。
 				if token != "" && strings.EqualFold(token, book.PrivateToken) {
 					c.SetSession(identify, token)

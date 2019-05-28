@@ -224,7 +224,7 @@ function pushVueLists($lists) {
 }
 
 /**
- * 发布项目
+ * 发布书籍
  */
 function releaseBook() {
     $.ajax({

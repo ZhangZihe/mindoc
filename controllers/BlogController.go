@@ -178,11 +178,11 @@ func (c *BlogController) ManageSetting() {
 			book, err := models.NewBook().FindByIdentify(bookIdentify)
 
 			if err != nil {
-				c.JsonResult(6011, "关联文档的项目不存在")
+				c.JsonResult(6011, "关联文档的书籍不存在")
 			}
 			doc, err := models.NewDocument().FindByIdentityFirst(documentIdentify, book.BookId)
 			if err != nil {
-				c.JsonResult(6003, "查询关联项目文档时出错")
+				c.JsonResult(6003, "查询关联书籍文档时出错")
 			}
 			documentId = doc.DocumentId
 
@@ -309,12 +309,12 @@ func (c *BlogController) ManageEdit() {
 		if blog.BlogType == 1 {
 			doc, err := models.NewDocument().Find(blog.DocumentId)
 			if err != nil {
-				logs.Error("查询关联项目文档时出错 ->", err)
-				c.JsonResult(6003, "查询关联项目文档时出错")
+				logs.Error("查询关联书籍文档时出错 ->", err)
+				c.JsonResult(6003, "查询关联书籍文档时出错")
 			}
 			book, err := models.NewBook().Find(doc.BookId)
 			if err != nil {
-				c.JsonResult(6002, "项目不存在或权限不足")
+				c.JsonResult(6002, "书籍不存在或权限不足")
 			}
 
 			// 如果不是超级管理员，则校验权限
@@ -642,7 +642,7 @@ func (c *BlogController) Download() {
 		}
 	}
 
-	//如果是链接的文章，需要校验文档ID是否一致，如果不是，需要保证附件的项目ID为0且文档的ID等于博文ID
+	//如果是链接的文章，需要校验文档ID是否一致，如果不是，需要保证附件的书籍ID为0且文档的ID等于博文ID
 	if blog.BlogType == 1 && attachment.DocumentId != blog.DocumentId {
 		c.ShowErrorPage(404, "附件不存在")
 	} else if blog.BlogType != 1 && (attachment.BookId != 0 || attachment.DocumentId != blogId) {

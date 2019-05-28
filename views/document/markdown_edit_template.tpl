@@ -370,12 +370,12 @@
                     <div class="form-group">
                         <div class="col-lg-6">
                             <label>
-                                <input type="radio" name="is_global" value="1"> 全局<span class="text">(任何项目都可用)</span>
+                                <input type="radio" name="is_global" value="1"> 全局<span class="text">(任何书籍都可用)</span>
                             </label>
                         </div>
                         <div class="col-lg-6">
                             <label>
-                                <input type="radio" name="is_global" value="0" checked> 项目<span class="text">(只有当前项目可用)</span>
+                                <input type="radio" name="is_global" value="0" checked> 书籍<span class="text">(只有当前书籍可用)</span>
                             </label>
                         </div>
                         <div class="clearfix"></div>

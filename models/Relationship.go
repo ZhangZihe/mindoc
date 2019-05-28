@@ -49,7 +49,7 @@ func (m *Relationship) Find(id int) (*Relationship, error) {
 	return m, err
 }
 
-//查询指定项目的创始人.
+//查询指定书籍的创始人.
 func (m *Relationship) FindFounder(book_id int) (*Relationship, error) {
 	o := orm.NewOrm()
 
@@ -65,7 +65,7 @@ func (m *Relationship) UpdateRoleId(bookId, memberId int, roleId conf.BookRole) 
 
 	if err := o.Read(book); err != nil {
 		logs.Error("UpdateRoleId => ", err)
-		return m, errors.New("项目不存在")
+		return m, errors.New("书籍不存在")
 	}
 	err := o.QueryTable(m.TableNameWithPrefix()).Filter("member_id", memberId).Filter("book_id", bookId).One(m)
 
@@ -135,7 +135,7 @@ func (m *Relationship) DeleteByBookIdAndMemberId(book_id, member_id int) error {
 	err := o.QueryTable(m.TableNameWithPrefix()).Filter("book_id", book_id).Filter("member_id", member_id).One(m)
 
 	if err == orm.ErrNoRows {
-		return errors.New("用户未参与该项目")
+		return errors.New("用户未参与该书籍")
 	}
 	if m.RoleId == conf.BookFounder {
 		return errors.New("不能删除创始人")
@@ -143,7 +143,7 @@ func (m *Relationship) DeleteByBookIdAndMemberId(book_id, member_id int) error {
 	_, err = o.Delete(m)
 
 	if err != nil {
-		logs.Error("删除项目参与者 => ", err)
+		logs.Error("删除书籍参与者 => ", err)
 		return errors.New("删除失败")
 	}
 	return nil

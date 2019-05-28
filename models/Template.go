@@ -15,7 +15,7 @@ type Template struct {
 	MemberId     int    `orm:"column(member_id);index" json:"member_id"`
 	BookId       int    `orm:"column(book_id);index" json:"book_id"`
 	BookName     string `orm:"-" json:"book_name"`
-	//是否是全局模板：0 否/1 是; 全局模板在所有项目中都可以使用；否则只能在创建模板的项目中使用
+	//是否是全局模板：0 否/1 是; 全局模板在所有书籍中都可以使用；否则只能在创建模板的书籍中使用
 	IsGlobal        int       `orm:"column(is_global);default(0)" json:"is_global"`
 	TemplateContent string    `orm:"column(template_content);type(text);null" json:"template_content"`
 	CreateTime      time.Time `orm:"column(create_time);type(datetime);auto_now_add" json:"create_time"`
@@ -60,7 +60,7 @@ func (t *Template) Find(templateId int) (*Template, error) {
 	return t, err
 }
 
-//查询属于指定项目的模板.
+//查询属于指定书籍的模板.
 func (t *Template) FindByBookId(bookId int) ([]*Template, error) {
 	if bookId <= 0 {
 		return nil, ErrInvalidParameter
@@ -77,7 +77,7 @@ func (t *Template) FindByBookId(bookId int) ([]*Template, error) {
 	return templateList, err
 }
 
-//查询指定项目所有可用模板列表.
+//查询指定书籍所有可用模板列表.
 func (t *Template) FindAllByBookId(bookId int) ([]*Template, error) {
 	if bookId <= 0 {
 		return nil, ErrInvalidParameter
@@ -130,7 +130,7 @@ func (t *Template) Save(cols ...string) (err error) {
 	o := orm.NewOrm()
 
 	if !o.QueryTable(NewBook().TableNameWithPrefix()).Filter("book_id", t.BookId).Exist() {
-		return errors.New("项目不存在")
+		return errors.New("书籍不存在")
 	}
 	if !o.QueryTable(NewMember().TableNameWithPrefix()).Filter("member_id", t.MemberId).Filter("status", 0).Exist() {
 		return errors.New("用户已被禁用")

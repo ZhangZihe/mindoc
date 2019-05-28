@@ -40,14 +40,14 @@
                     <div class="form-group">
                         <label>是否存在</label>
                             {{if .Model.IsExist }}
-                            <input type="text" value="存在" class="form-control input-readonly" readonly placeholder="项目名称">
+                            <input type="text" value="存在" class="form-control input-readonly" readonly placeholder="书籍名称">
                             {{else}}
-                            <input type="text" value="已删除" class="form-control input-readonly" readonly placeholder="项目名称">
+                            <input type="text" value="已删除" class="form-control input-readonly" readonly placeholder="书籍名称">
                             {{end}}
                     </div>
                     <div class="form-group">
-                        <label>项目/文章名称</label>
-                        <input type="text" value="{{.Model.BookName}}" class="form-control input-readonly" readonly placeholder="项目名称">
+                        <label>书籍/文章名称</label>
+                        <input type="text" value="{{.Model.BookName}}" class="form-control input-readonly" readonly placeholder="书籍名称">
                     </div>
                     {{if ne .Model.BookId 0}}
                     <div class="form-group">

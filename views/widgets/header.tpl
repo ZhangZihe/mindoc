@@ -17,7 +17,7 @@
                         <a href="{{urlfor "BlogController.List" }}" title="文章">文章</a>
                     </li>
                     <li {{if eq .ControllerName "ItemsetsController"}}class="active"{{end}}>
-                        <a href="{{urlfor "ItemsetsController.Index" }}" title="项目空间">项目空间</a>
+                        <a href="{{urlfor "ItemsetsController.Index" }}" title="文档库">文档库</a>
                     </li>
                 </ul>
                 <div class="searchbar pull-left visible-lg-inline-block visible-md-inline-block">
@@ -38,7 +38,7 @@
                                 <a href="{{urlfor "SettingController.Index"}}" title="个人中心"><i class="fa fa-user" aria-hidden="true"></i> 个人中心</a>
                             </li>
                             <li>
-                                <a href="{{urlfor "BookController.Index"}}" title="我的项目"><i class="fa fa-book" aria-hidden="true"></i> 我的项目</a>
+                                <a href="{{urlfor "BookController.Index"}}" title="我的书籍"><i class="fa fa-book" aria-hidden="true"></i> 我的书籍</a>
                             </li>
                             <li>
                                 <a href="{{urlfor "BlogController.ManageList"}}" title="我的文章"><i class="fa fa-file" aria-hidden="true"></i> 我的文章</a>
@@ -76,7 +76,7 @@
                             <a href="{{urlfor "SettingController.Index"}}" title="个人中心"><i class="fa fa-user" aria-hidden="true"></i> 个人中心</a>
                         </li>
                         <li>
-                            <a href="{{urlfor "BookController.Index"}}" title="我的项目"><i class="fa fa-book" aria-hidden="true"></i> 我的项目</a>
+                            <a href="{{urlfor "BookController.Index"}}" title="我的书籍"><i class="fa fa-book" aria-hidden="true"></i> 我的书籍</a>
                         </li>
                         <li>
                             <a href="{{urlfor "BlogController.ManageList"}}" title="我的文章"><i class="fa fa-file" aria-hidden="true"></i> 我的文章</a>

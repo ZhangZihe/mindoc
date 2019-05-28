@@ -283,7 +283,7 @@ func (c *ManagerController) DeleteMember() {
 	c.JsonResult(0, "ok")
 }
 
-//项目列表.
+//书籍列表.
 func (c *ManagerController) Books() {
 	c.Prepare()
 	c.TplName = "manager/books.tpl"
@@ -313,7 +313,7 @@ func (c *ManagerController) Books() {
 	c.Data["Lists"] = books
 }
 
-//编辑项目.
+//编辑书籍.
 func (c *ManagerController) EditBook() {
 	c.Prepare()
 
@@ -344,7 +344,7 @@ func (c *ManagerController) EditBook() {
 		itemId, _ := c.GetInt("itemId")
 
 		if strings.Count(description, "") > 500 {
-			c.JsonResult(6004, "项目描述不能大于500字")
+			c.JsonResult(6004, "书籍描述不能大于500字")
 		}
 		if commentStatus != "open" && commentStatus != "closed" && commentStatus != "group_only" && commentStatus != "registered_only" {
 			commentStatus = "closed"
@@ -356,7 +356,7 @@ func (c *ManagerController) EditBook() {
 			}
 		}
 		if !models.NewItemsets().Exist(itemId) {
-			c.JsonResult(6006, "项目空间不存在")
+			c.JsonResult(6006, "文档库不存在")
 		}
 		book.Publisher = publisher
 		book.HistoryCount = historyCount
@@ -403,7 +403,7 @@ func (c *ManagerController) EditBook() {
 	c.Data["Model"] = bookResult
 }
 
-// 删除项目.
+// 删除书籍.
 func (c *ManagerController) DeleteBook() {
 	c.Prepare()
 
@@ -417,7 +417,7 @@ func (c *ManagerController) DeleteBook() {
 	err := book.ThoroughDeleteBook(bookId)
 
 	if err == orm.ErrNoRows {
-		c.JsonResult(6002, "项目不存在")
+		c.JsonResult(6002, "书籍不存在")
 	}
 	if err != nil {
 		logs.Error("删除失败 -> ", err)
@@ -436,12 +436,12 @@ func (c *ManagerController) CreateToken() {
 	book, err := models.NewBook().FindByFieldFirst("identify", identify)
 
 	if err != nil {
-		c.JsonResult(6001, "项目不存在")
+		c.JsonResult(6001, "书籍不存在")
 	}
 	if action == "create" {
 
 		if book.PrivatelyOwned == 0 {
-			c.JsonResult(6001, "公开项目不能创建阅读令牌")
+			c.JsonResult(6001, "公开书籍不能创建阅读令牌")
 		}
 
 		book.PrivateToken = string(utils.Krand(conf.GetTokenSize(), utils.KC_RAND_KIND_ALL))
@@ -460,7 +460,7 @@ func (c *ManagerController) CreateToken() {
 	}
 }
 
-//项目设置.
+//书籍设置.
 func (c *ManagerController) Setting() {
 	c.Prepare()
 	c.TplName = "manager/setting.tpl"
@@ -486,7 +486,7 @@ func (c *ManagerController) Setting() {
 
 }
 
-// Transfer 转让项目.
+// Transfer 转让书籍.
 func (c *ManagerController) Transfer() {
 	c.Prepare()
 	account := c.GetString("account")
@@ -518,7 +518,7 @@ func (c *ManagerController) Transfer() {
 
 	if err != nil {
 		logs.Error("FindFounder => ", err)
-		c.JsonResult(6009, "查询项目创始人失败")
+		c.JsonResult(6009, "查询书籍创始人失败")
 	}
 	if member.MemberId == rel.MemberId {
 		c.JsonResult(6007, "不能转让给自己")
@@ -566,7 +566,7 @@ func (c *ManagerController) DeleteComment() {
 	c.JsonResult(0, "ok", comment)
 }
 
-//设置项目私有状态.
+//设置书籍私有状态.
 func (c *ManagerController) PrivatelyOwned() {
 	c.Prepare()
 	status := c.GetString("status")
@@ -989,7 +989,7 @@ func (c *ManagerController) TeamChangeMemberRole() {
 
 }
 
-//团队项目列表.
+//团队书籍列表.
 func (c *ManagerController) TeamBookList() {
 	c.Prepare()
 	c.TplName = "manager/team_book_list.tpl"
@@ -1037,7 +1037,7 @@ func (c *ManagerController) TeamBookList() {
 	}
 }
 
-//给团队增加项目.
+//给团队增加书籍.
 func (c *ManagerController) TeamBookAdd() {
 	c.Prepare()
 
@@ -1061,7 +1061,7 @@ func (c *ManagerController) TeamBookAdd() {
 	}
 }
 
-//搜索未参与的项目.
+//搜索未参与的书籍.
 func (c *ManagerController) TeamSearchBook() {
 	c.Prepare()
 
@@ -1081,7 +1081,7 @@ func (c *ManagerController) TeamSearchBook() {
 
 }
 
-//删除团队项目.
+//删除团队书籍.
 func (c *ManagerController) TeamBookDelete() {
 	c.Prepare()
 	teamRelationshipId, _ := c.GetInt("teamRelId")
@@ -1098,7 +1098,7 @@ func (c *ManagerController) TeamBookDelete() {
 	c.JsonResult(0, "OK")
 }
 
-//项目空间列表.
+//文档库列表.
 func (c *ManagerController) Itemsets() {
 	c.Prepare()
 	c.TplName = "manager/itemsets.tpl"
@@ -1126,7 +1126,7 @@ func (c *ManagerController) Itemsets() {
 
 }
 
-//编辑或添加项目空间.
+//编辑或添加文档库.
 func (c *ManagerController) ItemsetsEdit() {
 	c.Prepare()
 	itemId, _ := c.GetInt("itemId")
@@ -1140,9 +1140,9 @@ func (c *ManagerController) ItemsetsEdit() {
 	if itemId > 0 {
 		if item, err = models.NewItemsets().First(itemId); err != nil {
 			if err == orm.ErrNoRows {
-				c.JsonResult(5002, "项目空间不存在")
+				c.JsonResult(5002, "文档库不存在")
 			} else {
-				c.JsonResult(5003, "查询项目空间出错")
+				c.JsonResult(5003, "查询文档库出错")
 			}
 		}
 	} else {
@@ -1161,7 +1161,7 @@ func (c *ManagerController) ItemsetsEdit() {
 	c.JsonResult(0, "OK")
 }
 
-//删除项目空间.
+//删除文档库.
 func (c *ManagerController) ItemsetsDelete() {
 	c.Prepare()
 	itemId, _ := c.GetInt("itemId")

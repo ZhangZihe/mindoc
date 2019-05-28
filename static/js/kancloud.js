@@ -230,7 +230,7 @@ $(function () {
     });
 
     /**
-     * 项目内搜索
+     * 书籍内搜索
      */
     $("#searchForm").ajaxForm({
         beforeSubmit : function () {

@@ -29,25 +29,25 @@ import (
 // Book struct .
 type Book struct {
 	BookId int `orm:"pk;auto;unique;column(book_id)" json:"book_id"`
-	// BookName 项目名称.
+	// BookName 书籍名称.
 	BookName string `orm:"column(book_name);size(500)" json:"book_name"`
-	//所属项目空间
+	//所属文档库
 	ItemId int `orm:"column(item_id);type(int);default(1)" json:"item_id"`
-	// Identify 项目唯一标识.
+	// Identify 书籍唯一标识.
 	Identify string `orm:"column(identify);size(100);unique" json:"identify"`
 	//是否是自动发布 0 否/1 是
 	AutoRelease int `orm:"column(auto_release);type(int);default(0)" json:"auto_release"`
 	//是否开启下载功能 0 是/1 否
 	IsDownload int `orm:"column(is_download);type(int);default(0)" json:"is_download"`
 	OrderIndex int `orm:"column(order_index);type(int);default(0)" json:"order_index"`
-	// Description 项目描述.
+	// Description 书籍描述.
 	Description string `orm:"column(description);size(2000)" json:"description"`
 	//发行公司
 	Publisher string `orm:"column(publisher);size(500)" json:"publisher"`
 	Label     string `orm:"column(label);size(500)" json:"label"`
-	// PrivatelyOwned 项目私有： 0 公开/ 1 私有
+	// PrivatelyOwned 书籍私有： 0 公开/ 1 私有
 	PrivatelyOwned int `orm:"column(privately_owned);type(int);default(0)" json:"privately_owned"`
-	// 当项目是私有时的访问Token.
+	// 当书籍是私有时的访问Token.
 	PrivateToken string `orm:"column(private_token);size(500);null" json:"private_token"`
 	//访问密码.
 	BookPassword string `orm:"column(book_password);size(500);null" json:"book_password"`
@@ -73,7 +73,7 @@ type Book struct {
 	MemberId      int       `orm:"column(member_id);size(100)" json:"member_id"`
 	ModifyTime    time.Time `orm:"type(datetime);column(modify_time);null;auto_now" json:"modify_time"`
 	Version       int64     `orm:"type(bigint);column(version)" json:"version"`
-	//是否使用第一篇文章项目为默认首页,0 否/1 是
+	//是否使用第一篇文章书籍为默认首页,0 否/1 是
 	IsUseFirstDocument int `orm:"column(is_use_first_document);type(int);default(0)" json:"is_use_first_document"`
 	//是否开启自动保存：0 否/1 是
 	AutoSave int `orm:"column(auto_save);type(tinyint);default(0)" json:"auto_save"`
@@ -109,7 +109,7 @@ func NewBook() *Book {
 	return &Book{}
 }
 
-//添加一个项目
+//添加一个书籍
 func (book *Book) Insert() error {
 	o := orm.NewOrm()
 	//	o.Begin()
@@ -130,7 +130,7 @@ func (book *Book) Insert() error {
 		relationship.MemberId = book.MemberId
 		err = relationship.Insert()
 		if err != nil {
-			logs.Error("插入项目与用户关联 -> ", err)
+			logs.Error("插入书籍与用户关联 -> ", err)
 			//o.Rollback()
 			return err
 		}
@@ -161,7 +161,7 @@ func (book *Book) Find(id int, cols ...string) (*Book, error) {
 	return book, err
 }
 
-//更新一个项目
+//更新一个书籍
 func (book *Book) Update(cols ...string) error {
 	o := orm.NewOrm()
 
@@ -182,14 +182,14 @@ func (book *Book) Update(cols ...string) error {
 	return err
 }
 
-//复制项目
+//复制书籍
 func (book *Book) Copy(identify string) error {
 	o := orm.NewOrm()
 
 	err := o.QueryTable(book.TableNameWithPrefix()).Filter("identify", identify).One(book)
 
 	if err != nil {
-		logs.Error("查询项目时出错 -> ", err)
+		logs.Error("查询书籍时出错 -> ", err)
 		return err
 	}
 	if err := o.Begin(); err != nil {
@@ -206,14 +206,14 @@ func (book *Book) Copy(identify string) error {
 	book.HistoryCount = 0
 
 	if _, err := o.Insert(book); err != nil {
-		logs.Error("复制项目时出错 -> ", err)
+		logs.Error("复制书籍时出错 -> ", err)
 		o.Rollback()
 		return err
 	}
 	var rels []*Relationship
 
 	if _, err := o.QueryTable(NewRelationship().TableNameWithPrefix()).Filter("book_id", bookId).All(&rels); err != nil {
-		logs.Error("复制项目关系时出错 -> ", err)
+		logs.Error("复制书籍关系时出错 -> ", err)
 		o.Rollback()
 		return err
 	}
@@ -222,7 +222,7 @@ func (book *Book) Copy(identify string) error {
 		rel.BookId = book.BookId
 		rel.RelationshipId = 0
 		if _, err := o.Insert(rel); err != nil {
-			logs.Error("复制项目关系时出错 -> ", err)
+			logs.Error("复制书籍关系时出错 -> ", err)
 			o.Rollback()
 			return err
 		}
@@ -231,13 +231,13 @@ func (book *Book) Copy(identify string) error {
 	var docs []*Document
 
 	if _, err := o.QueryTable(NewDocument().TableNameWithPrefix()).Filter("book_id", bookId).Filter("parent_id", 0).All(&docs); err != nil && err != orm.ErrNoRows {
-		logs.Error("读取项目文档时出错 -> ", err)
+		logs.Error("读取书籍文档时出错 -> ", err)
 		o.Rollback()
 		return err
 	}
 	if len(docs) > 0 {
 		if err := recursiveInsertDocument(docs, o, book.BookId, 0); err != nil {
-			logs.Error("复制项目时出错 -> ", err)
+			logs.Error("复制书籍时出错 -> ", err)
 			o.Rollback()
 			return err
 		}
@@ -257,7 +257,7 @@ func recursiveInsertDocument(docs []*Document, o orm.Ormer, bookId int, parentId
 		doc.Version = time.Now().Unix()
 
 		if _, err := o.Insert(doc); err != nil {
-			logs.Error("插入项目时出错 -> ", err)
+			logs.Error("插入书籍时出错 -> ", err)
 			return err
 		}
 
@@ -309,7 +309,7 @@ func (book *Book) FindByFieldFirst(field string, value interface{}) (*Book, erro
 
 }
 
-//根据项目标识查询项目
+//根据书籍标识查询书籍
 func (book *Book) FindByIdentify(identify string, cols ...string) (*Book, error) {
 	o := orm.NewOrm()
 
@@ -318,7 +318,7 @@ func (book *Book) FindByIdentify(identify string, cols ...string) (*Book, error)
 	return book, err
 }
 
-//分页查询指定用户的项目
+//分页查询指定用户的书籍
 func (book *Book) FindToPager(pageIndex, pageSize, memberId int) (books []*BookResult, totalCount int, err error) {
 
 	o := orm.NewOrm()
@@ -370,7 +370,7 @@ ORDER BY book.order_index, book.book_id DESC limit ?,?`
 
 	_, err = o.Raw(sql2, memberId, memberId, offset, pageSize).QueryRows(&books)
 	if err != nil {
-		logs.Error("分页查询项目列表 => ", err)
+		logs.Error("分页查询书籍列表 => ", err)
 		return
 	}
 	sql := "SELECT m.account,doc.modify_time FROM md_documents AS doc LEFT JOIN md_members AS m ON doc.modify_at=m.member_id WHERE book_id = ? LIMIT 1 ORDER BY doc.modify_time DESC"
@@ -400,7 +400,7 @@ ORDER BY book.order_index, book.book_id DESC limit ?,?`
 	return
 }
 
-// 彻底删除项目.
+// 彻底删除书籍.
 func (book *Book) ThoroughDeleteBook(id int) error {
 	if id <= 0 {
 		return ErrInvalidParameter
@@ -427,7 +427,7 @@ func (book *Book) ThoroughDeleteBook(id int) error {
 		o.Rollback()
 		return err
 	}
-	//删除项目
+	//删除书籍
 	_, err = o.Raw("DELETE FROM "+book.TableNameWithPrefix()+" WHERE book_id = ?", book.BookId).Exec()
 
 	if err != nil {
@@ -459,11 +459,11 @@ func (book *Book) ThoroughDeleteBook(id int) error {
 
 	//删除导出缓存
 	if err := os.RemoveAll(filepath.Join(conf.GetExportOutputPath(), strconv.Itoa(id))); err != nil {
-		logs.Error("删除项目缓存失败 ->", err)
+		logs.Error("删除书籍缓存失败 ->", err)
 	}
 	//删除附件和图片
 	if err := os.RemoveAll(filepath.Join(conf.WorkingDirectory, "uploads", book.Identify)); err != nil {
-		logs.Error("删除项目附件和图片失败 ->", err)
+		logs.Error("删除书籍附件和图片失败 ->", err)
 	}
 
 	return o.Commit()
@@ -613,7 +613,7 @@ func (book *Book) ResetDocumentNumber(bookId int) {
 	}
 }
 
-//导入项目
+//导入书籍
 func (book *Book) ImportBook(zipPath string) error {
 	if !filetil.FileExists(zipPath) {
 		return errors.New("文件不存在 => " + zipPath)
@@ -701,7 +701,7 @@ func (book *Book) ImportBook(zipPath string) error {
 					originalImageUrl := string(images[0][2])
 					imageUrl := strings.Replace(string(originalImageUrl), "\\", "/", -1)
 
-					//如果是本地路径，则需要将图片复制到项目目录
+					//如果是本地路径，则需要将图片复制到书籍目录
 					if !strings.HasPrefix(imageUrl, "http://") &&
 						!strings.HasPrefix(imageUrl, "https://") &&
 						!strings.HasPrefix(imageUrl, "ftp://") {
@@ -777,7 +777,7 @@ func (book *Book) ImportBook(zipPath string) error {
 						if filetil.FileExists(linkPath) {
 							ext := filepath.Ext(linkPath)
 							//logs.Info("当前后缀 -> ",ext)
-							//如果链接是Markdown文件，则生成文档标识,否则，将目标文件复制到项目目录
+							//如果链接是Markdown文件，则生成文档标识,否则，将目标文件复制到书籍目录
 							if strings.EqualFold(ext, ".md") || strings.EqualFold(ext, ".markdown") {
 								docIdentify := strings.Replace(strings.TrimPrefix(strings.Replace(linkPath, "\\", "/", -1), tempPath+"/"), "/", "-", -1)
 								//logs.Info(originalLink, "|", linkPath, "|", docIdentify)
@@ -903,10 +903,10 @@ func (book *Book) ImportBook(zipPath string) error {
 	})
 
 	if err != nil {
-		logs.Error("导入项目异常 => ", err)
-		book.Description = "【项目导入存在错误：" + err.Error() + "】"
+		logs.Error("导入书籍异常 => ", err)
+		book.Description = "【书籍导入存在错误：" + err.Error() + "】"
 	}
-	logs.Info("项目导入完毕 => ", book.BookName)
+	logs.Info("书籍导入完毕 => ", book.BookName)
 	book.ReleaseContent(book.BookId)
 	return err
 }
@@ -933,7 +933,7 @@ where mtr.book_id = ? and mtm.member_id = ? order by mtm.role_id asc limit 1;`
 	err = o.Raw(sql, bookId, memberId).QueryRow(&roleId)
 
 	if err != nil {
-		logs.Error("查询用户项目角色出错 -> book_id=", bookId, " member_id=", memberId, err)
+		logs.Error("查询用户书籍角色出错 -> book_id=", bookId, " member_id=", memberId, err)
 		return 0, err
 	}
 	return conf.BookRole(roleId), nil

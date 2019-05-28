@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>项目管理 - Powered by MinDoc</title>
+    <title>书籍管理 - Powered by MinDoc</title>
 
     <!-- Bootstrap -->
     <link href="{{cdncss "/static/bootstrap/css/bootstrap.min.css"}}" rel="stylesheet" type="text/css">
@@ -28,7 +28,7 @@
             <div class="page-right">
                 <div class="m-box">
                     <div class="box-head">
-                        <strong class="box-title">项目列表</strong>
+                        <strong class="box-title">书籍列表</strong>
                     </div>
                 </div>
                 <div class="box-body" id="bookList">
@@ -38,7 +38,7 @@
                         <div class="list-item">
                                 <div class="book-title">
                                     <div class="pull-left">
-                                        <a href="{{urlfor "ManagerController.EditBook" ":key" $item.Identify}}" title="编辑项目" data-toggle="tooltip">
+                                        <a href="{{urlfor "ManagerController.EditBook" ":key" $item.Identify}}" title="编辑书籍" data-toggle="tooltip">
                                             {{if eq $item.PrivatelyOwned 0}}
                                             <i class="fa fa-unlock" aria-hidden="true"></i>
                                             {{else}}
@@ -70,7 +70,7 @@
                                     {{if eq $item.Description ""}}
                                     &nbsp;
                                     {{else}}
-                                        <a href="{{urlfor "ManagerController.EditBook" ":key" $item.Identify}}" title="编辑项目" style="font-size: 12px;" target="_blank">
+                                        <a href="{{urlfor "ManagerController.EditBook" ":key" $item.Identify}}" title="编辑书籍" style="font-size: 12px;" target="_blank">
                                             {{$item.Description}}
                                         </a>
                                     {{end}}
@@ -109,12 +109,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">删除项目</h4>
+                    <h4 class="modal-title">删除书籍</h4>
                 </div>
                 <div class="modal-body">
-                    <span style="font-size: 14px;font-weight: 400;">确定删除项目吗？</span>
+                    <span style="font-size: 14px;font-weight: 400;">确定删除书籍吗？</span>
                     <p></p>
-                    <p class="text error-message">删除项目后将无法找回。</p>
+                    <p class="text error-message">删除书籍后将无法找回。</p>
                 </div>
                 <div class="modal-footer">
                     <span id="form-error-message2" class="error-message"></span>
@@ -132,7 +132,7 @@
 <script src="{{cdnjs "/static/js/main.js"}}" type="text/javascript"></script>
 <script type="text/javascript">
         /**
-         * 删除项目
+         * 删除书籍
          */
         function deleteBook($id) {
             $("#deleteBookModal").find("input[name='book_id']").val($id);
@@ -140,7 +140,7 @@
         }
         $(function () {
             /**
-             * 删除项目
+             * 删除书籍
              */
             $("#deleteBookForm").ajaxForm({
                 beforeSubmit : function () {

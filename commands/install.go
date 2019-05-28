@@ -120,10 +120,10 @@ func initialization() {
 		book := models.NewBook()
 
 		book.MemberId = member.MemberId
-		book.BookName = "演示项目"
+		book.BookName = "演示书籍"
 		book.Status = 0
 		book.ItemId = 1
-		book.Description = "这是一个演示项目，该项目是由系统初始化时自动创建。"
+		book.Description = "这是一个演示书籍，该书籍是由系统初始化时自动创建。"
 		book.CommentCount = 0
 		book.PrivatelyOwned = 0
 		book.CommentStatus = "closed"
@@ -136,17 +136,17 @@ func initialization() {
 		book.Theme = "default"
 
 		if err := book.Insert(); err != nil {
-			panic("初始化项目失败 -> " + err.Error())
+			panic("初始化书籍失败 -> " + err.Error())
 			os.Exit(1)
 		}
 	}
 
 	if !models.NewItemsets().Exist(1) {
 		item := models.NewItemsets()
-		item.ItemName = "默认项目空间"
+		item.ItemName = "默认文档库"
 		item.MemberId = 1
 		if err := item.Save(); err != nil {
-			panic("初始化项目空间失败 -> " + err.Error())
+			panic("初始化文档库失败 -> " + err.Error())
 			os.Exit(1)
 		}
 	}

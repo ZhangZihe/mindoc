@@ -64,7 +64,7 @@ func (m *MemberRelationshipResult) ResolveRoleName() *MemberRelationshipResult {
 	return m
 }
 
-// 根据项目ID查询用户
+// 根据书籍ID查询用户
 func (m *MemberRelationshipResult) FindForUsersByBookId(bookId, pageIndex, pageSize int) ([]*MemberRelationshipResult, int, error) {
 	o := orm.NewOrm()
 

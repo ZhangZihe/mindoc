@@ -30,13 +30,13 @@ type Blog struct {
 	MemberAvatar string `orm:"-" json:"member_avatar"`
 	//文章类型:0 普通文章/1 链接文章
 	BlogType int `orm:"column(blog_type);type(int);default(0)" json:"blog_type"`
-	//链接到的项目中的文档ID
+	//链接到的书籍中的文档ID
 	DocumentId int `orm:"column(document_id);type(int);default(0)" json:"document_id"`
 	//文章的标识
 	DocumentIdentify string `orm:"-" json:"document_identify"`
-	//关联文档的项目标识
+	//关联文档的书籍标识
 	BookIdentify string `orm:"-" json:"book_identify"`
-	//关联文档的项目ID
+	//关联文档的书籍ID
 	BookId int `orm:"-" json:"book_id"`
 	//文章摘要
 	BlogExcerpt string `orm:"column(blog_excerpt);size(1500)" json:"blog_excerpt"`
@@ -154,7 +154,7 @@ func (b *Blog) FindByIdentify(identify string) (*Blog, error) {
 //获取指定文章的链接内容
 func (b *Blog) Link() (*Blog, error) {
 	o := orm.NewOrm()
-	//如果是链接文章，则需要从链接的项目中查找文章内容
+	//如果是链接文章，则需要从链接的书籍中查找文章内容
 	if b.BlogType == 1 && b.DocumentId > 0 {
 		doc := NewDocument()
 		if err := o.QueryTable(doc.TableNameWithPrefix()).Filter("document_id", b.DocumentId).One(doc, "release", "markdown", "identify", "book_id"); err != nil {
@@ -166,7 +166,7 @@ func (b *Blog) Link() (*Blog, error) {
 			b.BlogContent = doc.Markdown
 			book := NewBook()
 			if err := o.QueryTable(book.TableNameWithPrefix()).Filter("book_id", doc.BookId).One(book, "identify"); err != nil {
-				logs.Error("查询关联文档的项目时出错 ->", err)
+				logs.Error("查询关联文档的书籍时出错 ->", err)
 			} else {
 				b.BookIdentify = book.Identify
 				b.BookId = doc.BookId

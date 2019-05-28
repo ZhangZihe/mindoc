@@ -26,18 +26,18 @@ func (c *TemplateController) isPermission() (error) {
 		book, err := models.NewBookResult().FindByIdentify(bookIdentify, c.Member.MemberId)
 		if err != nil {
 			if err == orm.ErrNoRows {
-				return errors.New("项目不存在或没有权限")
+				return errors.New("书籍不存在或没有权限")
 			}
-			return errors.New("查询项目模板失败")
+			return errors.New("查询书籍模板失败")
 		}
 		c.BookId = book.BookId
 	} else {
 		book, err := models.NewBook().FindByIdentify(bookIdentify, "book_id")
 		if err != nil {
 			if err == orm.ErrNoRows {
-				return errors.New("项目不存在或没有权限")
+				return errors.New("书籍不存在或没有权限")
 			}
-			return errors.New("查询项目模板失败")
+			return errors.New("查询书籍模板失败")
 		}
 		c.BookId = book.BookId
 	}
@@ -72,7 +72,7 @@ func (c *TemplateController) List() {
 	templateList,err := models.NewTemplate().FindAllByBookId(c.BookId)
 
 	if err != nil && err != orm.ErrNoRows{
-		c.Data["ErrorMessage"] = "查询项目模板失败"
+		c.Data["ErrorMessage"] = "查询书籍模板失败"
 	}
 	if templateList != nil {
 		for i,t := range templateList {
@@ -121,12 +121,12 @@ func (c *TemplateController) Add() {
 		template.IsGlobal = isGlobal
 	}else{
 		template.IsGlobal = 0
-		//如果不是管理员需要判断是否有项目权限
+		//如果不是管理员需要判断是否有书籍权限
 		rel,err := models.NewRelationship().FindByBookIdAndMemberId(c.BookId,c.Member.MemberId)
 		if err != nil || rel.RoleId == conf.BookObserver {
 			c.JsonResult(403,"没有权限")
 		}
-		//如果修改的模板不是本人创建的，并且又不是项目创建者则禁止修改
+		//如果修改的模板不是本人创建的，并且又不是书籍创建者则禁止修改
 		if template.MemberId > 0 && template.MemberId != c.Member.MemberId && rel.RoleId != conf.BookFounder {
 			c.JsonResult(403,"没有权限")
 		}
@@ -164,7 +164,7 @@ func (c *TemplateController) Delete() {
 			c.JsonResult(500,"删除失败")
 		}
 	}else{
-		//如果不是管理员需要判断是否有项目权限
+		//如果不是管理员需要判断是否有书籍权限
 		rel,err := models.NewRelationship().FindByBookIdAndMemberId(template.BookId,c.Member.MemberId)
 		if err != nil || rel.RoleId == conf.BookObserver {
 			c.JsonResult(403,"没有权限")

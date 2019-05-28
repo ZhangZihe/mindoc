@@ -27,7 +27,7 @@
         <div class="row">
             <div class="page-left">
                 <ul class="menu">
-                    <li {{if eq .ControllerName "BookController"}}class="active"{{end}}><a href="{{urlfor "BookController.Index"}}" class="item"><i class="fa fa-sitemap" aria-hidden="true"></i> 我的项目</a> </li>
+                    <li {{if eq .ControllerName "BookController"}}class="active"{{end}}><a href="{{urlfor "BookController.Index"}}" class="item"><i class="fa fa-sitemap" aria-hidden="true"></i> 我的书籍</a> </li>
                     <li {{if eq .ControllerName "BlogController"}}class="active"{{end}}><a href="{{urlfor "BlogController.ManageList"}}" class="item"><i class="fa fa-file" aria-hidden="true"></i> 我的文章</a> </li>
                 </ul>
             </div>
@@ -116,7 +116,7 @@
 <script type="text/javascript">
 
     /**
-     * 删除项目
+     * 删除书籍
      */
     function deleteBlog($id) {
         $("#deleteBlogModal").find("input[name='blog_id']").val($id);
@@ -151,7 +151,7 @@
             deleteBlog($(this).attr("data-id"));
         });
         /**
-         * 删除项目
+         * 删除书籍
          */
         $("#deleteBlogForm").ajaxForm({
             beforeSubmit : function () {

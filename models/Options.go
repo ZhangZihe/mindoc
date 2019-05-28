@@ -146,7 +146,7 @@ func (m *Option) Init() error {
 	}
 	if !o.QueryTable(m.TableNameWithPrefix()).Filter("option_name", "site_description").Exist() {
 		option := NewOption()
-		option.OptionValue = "搜道全书是一款针对搜道内部使用的简单好用的文档管理系统，可以用来储存日常接口文档，数据库字典，手册说明等文档。内置项目管理，用户管理，权限管理等功能，支持Markdown和富文本两种编辑器，能够满足各部门的文档管理需求。"
+		option.OptionValue = "搜道全书是一款针对搜道内部使用的简单好用的文档管理系统，可以用来储存日常接口文档，数据库字典，手册说明等文档。内置书籍管理，用户管理，权限管理等功能，支持Markdown和富文本两种编辑器，能够满足各部门的文档管理需求。"
 		option.OptionName = "site_description"
 		option.OptionTitle = "站点描述"
 		if _, err := o.Insert(option); err != nil {
