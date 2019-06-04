@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/lifei6671/mindoc/utils/requests"
 )
@@ -87,6 +88,7 @@ type CgiUserGetResponse struct {
 	Gender          string `json:"gender"`
 	IsStop          string `json:"isStop"`
 	ProfileImageURL string `json:"profileImageUrl"`
+	DepartmentIds   []int  `json:"departmentIds"`
 	ErrorCode       int    `json:"errorCode"`
 	ErrorMessage    string `json:"errorMessage"`
 }

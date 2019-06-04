@@ -252,11 +252,22 @@ func (c *AccountController) Oauth4fxiaoke() {
 		member.Email = result.Email
 		member.Status = 0
 		if err := member.Add(); err != nil {
-			c.JsonResult(6006, "注册失败，请联系系统管理员处理")
+			c.JsonResult(6006, "注册失败，请联系系统管理员处理: "+err.Error())
 			return
 		}
 		addedMember, _ := member.FindByAccount(result.Account)
 		member = addedMember
+
+		teamID := member.AllotTeam(result.DepartmentIds)
+		teamMember := models.NewTeamMember()
+		teamMember.TeamId = teamID
+		teamMember.MemberId = member.MemberId
+		teamMember.RoleId = 3 //默认为观察者
+		err := teamMember.Save()
+		if err != nil {
+			c.JsonResult(6006, "分配团队失败, 但这并不影响您的使用, 请刷新该页面即可: "+err.Error())
+			return
+		}
 	}
 
 	//自动登录

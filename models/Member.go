@@ -231,6 +231,42 @@ func (m *Member) ResolveRoleName() {
 	}
 }
 
+func (m *Member) AllotTeam(departmentIds []int) int {
+	for _, item := range departmentIds {
+		switch item {
+		case 1040: //聚客通销售部
+			return 1
+		case 1001: //技术部
+			return 2
+		case 1002: //业务管理部
+			return 3
+		case 1022: //聚客通市场部
+			return 4
+		case 1005: //总裁办
+			return 5
+		case 1059: //客户成功部
+			return 6
+		case 1019: //产品设计部
+			return 7
+		case 1034: //美女时钟事业部
+			return 8
+		case 1006: //财务部
+			return 9
+		case 1007: //人事行政部
+			return 10
+		case 1152: //聚客通零售
+			return 11
+		case 1107: //广州公司
+			return 12
+		case 1168: //渠道部
+			return 13
+		default:
+			continue
+		}
+	}
+	return 0
+}
+
 //根据账号查找用户.
 func (m *Member) FindByAccount(account string) (*Member, error) {
 	o := orm.NewOrm()
