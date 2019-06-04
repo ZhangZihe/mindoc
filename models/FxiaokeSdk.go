@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
 
 	"github.com/lifei6671/mindoc/utils/requests"
 )
