@@ -356,7 +356,7 @@ func (c *ManagerController) EditBook() {
 			}
 		}
 		if !models.NewItemsets().Exist(itemId) {
-			c.JsonResult(6006, "文档库不存在")
+			c.JsonResult(6006, "书架不存在")
 		}
 		book.Publisher = publisher
 		book.HistoryCount = historyCount
@@ -1098,7 +1098,7 @@ func (c *ManagerController) TeamBookDelete() {
 	c.JsonResult(0, "OK")
 }
 
-//文档库列表.
+//书架列表.
 func (c *ManagerController) Itemsets() {
 	c.Prepare()
 	c.TplName = "manager/itemsets.tpl"
@@ -1126,7 +1126,7 @@ func (c *ManagerController) Itemsets() {
 
 }
 
-//编辑或添加文档库.
+//编辑或添加书架.
 func (c *ManagerController) ItemsetsEdit() {
 	c.Prepare()
 	itemId, _ := c.GetInt("itemId")
@@ -1140,9 +1140,9 @@ func (c *ManagerController) ItemsetsEdit() {
 	if itemId > 0 {
 		if item, err = models.NewItemsets().First(itemId); err != nil {
 			if err == orm.ErrNoRows {
-				c.JsonResult(5002, "文档库不存在")
+				c.JsonResult(5002, "书架不存在")
 			} else {
-				c.JsonResult(5003, "查询文档库出错")
+				c.JsonResult(5003, "查询书架出错")
 			}
 		}
 	} else {
@@ -1161,7 +1161,7 @@ func (c *ManagerController) ItemsetsEdit() {
 	c.JsonResult(0, "OK")
 }
 
-//删除文档库.
+//删除书架.
 func (c *ManagerController) ItemsetsDelete() {
 	c.Prepare()
 	itemId, _ := c.GetInt("itemId")

@@ -62,7 +62,7 @@
                                 <p class="text">书籍标识用来标记书籍的唯一性，不可修改。</p>
                             </div>
                             <div class="form-group">
-                                <label>文档库</label>
+                                <label>书架</label>
                                 <select class="js-data-example-ajax form-control" multiple="multiple" name="itemId">
                                     <option value="{{.Model.ItemId}}" selected="selected">{{.Model.ItemName}}</option>
                                 </select>

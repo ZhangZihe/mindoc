@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-//文档库
+//书架
 type Itemsets struct {
 	ItemId      int       `orm:"column(item_id);pk;auto;unique" json:"item_id"`
 	ItemName    string    `orm:"column(item_name);size(500)" json:"item_name"`
@@ -54,7 +54,7 @@ func (item *Itemsets) First(itemId int) (*Itemsets, error) {
 	}
 	err := item.QueryTable().Filter("item_id", itemId).One(item)
 	if err != nil {
-		logs.Error("查询文档库失败 -> item_id=", itemId, err)
+		logs.Error("查询书架失败 -> item_id=", itemId, err)
 	} else {
 		item.Include()
 	}
@@ -64,7 +64,7 @@ func (item *Itemsets) First(itemId int) (*Itemsets, error) {
 func (item *Itemsets) FindFirst(itemKey string) (*Itemsets, error) {
 	err := item.QueryTable().Filter("item_key", itemKey).One(item)
 	if err != nil {
-		logs.Error("查询文档库失败 -> itemKey=", itemKey, err)
+		logs.Error("查询书架失败 -> itemKey=", itemKey, err)
 	} else {
 		item.Include()
 	}
@@ -83,14 +83,14 @@ func (item *Itemsets) Save() (err error) {
 	item.ItemKey = strings.TrimSpace(item.ItemKey)
 
 	if item.ItemName == "" {
-		return errors.New("文档库名称不能为空")
+		return errors.New("书架名称不能为空")
 	}
 	if item.ItemKey == "" {
 		item.ItemKey = cryptil.NewRandChars(16)
 	}
 
 	if item.QueryTable().Filter("item_id__ne", item.ItemId).Filter("item_key", item.ItemKey).Exist() {
-		return errors.New("文档库标识已存在")
+		return errors.New("书架标识已存在")
 	}
 	if item.ItemId > 0 {
 		_, err = orm.NewOrm().Update(item)
@@ -106,10 +106,10 @@ func (item *Itemsets) Delete(itemId int) (err error) {
 		return ErrInvalidParameter
 	}
 	if itemId == 1 {
-		return errors.New("默认文档库不能删除")
+		return errors.New("默认书架不能删除")
 	}
 	if !item.Exist(itemId) {
-		return errors.New("文档库不存在")
+		return errors.New("书架不存在")
 	}
 	o := orm.NewOrm()
 	if err := o.Begin(); err != nil {
@@ -118,12 +118,12 @@ func (item *Itemsets) Delete(itemId int) (err error) {
 	}
 	_, err = o.QueryTable(item.TableNameWithPrefix()).Filter("item_id", itemId).Delete()
 	if err != nil {
-		logs.Error("删除文档库失败 -> item_id=", itemId, err)
+		logs.Error("删除书架失败 -> item_id=", itemId, err)
 		o.Rollback()
 	}
 	_, err = o.Raw("update md_books set item_id=1 where item_id=?;", itemId).Exec()
 	if err != nil {
-		logs.Error("删除文档库失败 -> item_id=", itemId, err)
+		logs.Error("删除书架失败 -> item_id=", itemId, err)
 		o.Rollback()
 	}
 
@@ -176,7 +176,7 @@ func (item *Itemsets) FindToPager(pageIndex, pageSize int) (list []*Itemsets, to
 	return
 }
 
-//根据文档库名称查询.
+//根据书架名称查询.
 func (item *Itemsets) FindItemsetsByName(name string, limit int) (*SelectMemberResult, error) {
 	result := SelectMemberResult{}
 
@@ -189,7 +189,7 @@ func (item *Itemsets) FindItemsetsByName(name string, limit int) (*SelectMemberR
 		_, err = item.QueryTable().Filter("item_name__icontains", name).Limit(limit).All(&itemsets)
 	}
 	if err != nil {
-		logs.Error("查询文档库失败 ->", err)
+		logs.Error("查询书架失败 ->", err)
 		return &result, err
 	}
 
@@ -206,14 +206,14 @@ func (item *Itemsets) FindItemsetsByName(name string, limit int) (*SelectMemberR
 	return &result, err
 }
 
-//根据文档库标识查询文档库的书籍列表.
+//根据书架标识查询书架的书籍列表.
 func (item *Itemsets) FindItemsetsByItemKey(key string, pageIndex, pageSize, memberId int) (books []*BookResult, totalCount int, err error) {
 	o := orm.NewOrm()
 
 	err = item.QueryTable().Filter("item_key", key).One(item)
 
 	if err != nil {
-		logs.Error("查询文档库时出错 ->", key, err)
+		logs.Error("查询书架时出错 ->", key, err)
 		return nil, 0, err
 	}
 	offset := (pageIndex - 1) * pageSize
@@ -231,7 +231,7 @@ WHERE book.item_id = ? AND (book.privately_owned = 0 or rel.role_id >= 0 or team
 
 		err = o.Raw(sql1, memberId, memberId, item.ItemId).QueryRow(&totalCount)
 		if err != nil {
-			logs.Error("查询文档库时出错 ->", key, err)
+			logs.Error("查询书架时出错 ->", key, err)
 			return
 		}
 		sql2 := `SELECT book.*,rel1.*,member.account AS create_name FROM md_books AS book

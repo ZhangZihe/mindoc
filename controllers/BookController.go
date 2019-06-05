@@ -158,7 +158,7 @@ func (c *BookController) SaveBook() {
 	}
 
 	if !models.NewItemsets().Exist(itemId) {
-		c.JsonResult(6006, "文档库不存在")
+		c.JsonResult(6006, "书架不存在")
 	}
 	if editor != "markdown" && editor != "html" {
 		editor = "markdown"
@@ -459,7 +459,7 @@ func (c *BookController) Create() {
 			privatelyOwned = 1
 		}
 		if !models.NewItemsets().Exist(itemId) {
-			c.JsonResult(6005, "文档库不存在")
+			c.JsonResult(6005, "书架不存在")
 		}
 		if commentStatus != "open" && commentStatus != "closed" && commentStatus != "group_only" && commentStatus != "registered_only" {
 			commentStatus = "closed"
@@ -589,7 +589,7 @@ func (c *BookController) Import() {
 		c.JsonResult(6003, "书籍标识只能包含小写字母、数字，以及“-”和“_”符号,并且只能小写字母开头")
 	}
 	if !models.NewItemsets().Exist(itemId) {
-		c.JsonResult(6007, "文档库不存在")
+		c.JsonResult(6007, "书架不存在")
 	}
 	if strings.Count(identify, "") > 50 {
 		c.JsonResult(6004, "文档标识不能超过50字")
@@ -962,7 +962,7 @@ func (c *BookController) TeamSearch() {
 
 }
 
-//文档库搜索.
+//书架搜索.
 func (c *BookController) ItemsetsSearch() {
 	c.Prepare()
 

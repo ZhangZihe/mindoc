@@ -139,12 +139,12 @@
                 <div class="form-group">
                     <div class="pull-left" style="width: 620px">
                         <div class="form-group required">
-                            <label class="text-label col-sm-2">文档库</label>
+                            <label class="text-label col-sm-2">书架</label>
                             <div class="col-sm-10">
                                 <select class="js-data-example-ajax-add form-control" multiple="multiple" name="itemId" id="itemId">
                                 {{if .Item}}<option value="{{.Item.ItemId}}" selected>{{.Item.ItemName}}</option> {{end}}
                                 </select>
-                                <p class="text">每个书籍必须归属一个文档库，超级管理员可在后台管理和维护</p>
+                                <p class="text">每个书籍必须归属一个书架，超级管理员可在后台管理和维护</p>
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -212,11 +212,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="form-group required">
-                            <label class="text-label">文档库</label>
+                            <label class="text-label">书架</label>
                             <select class="js-data-example-ajax-import form-control" multiple="multiple" name="itemId">
                                 {{if .Item}}<option value="{{.Item.ItemId}}" selected>{{.Item.ItemName}}</option> {{end}}
                             </select>
-                            <p class="text">每个书籍必须归属一个文档库，超级管理员可在后台管理和维护</p>
+                            <p class="text">每个书籍必须归属一个书架，超级管理员可在后台管理和维护</p>
                         </div>
                         <div class="form-group required">
                             <label class="text-label">书籍标题</label>
@@ -513,7 +513,7 @@
 
             var itemId = $("#itemId").val();
             if (itemId <= 0) {
-                return showError("请选择文档库")
+                return showError("请选择书架")
             }
             var bookName = $.trim($("#bookName").val());
             if (bookName === "") {
@@ -581,7 +581,7 @@
 
             var itemId = $then.find("input[name='itemId']").val();
             if (itemId <= 0) {
-                return showError("请选择文档库")
+                return showError("请选择书架")
             }
 
             var bookName = $.trim($then.find("input[name='book_name']").val());
